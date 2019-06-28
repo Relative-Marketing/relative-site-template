@@ -12,4 +12,4 @@ noroot mkdir -p ${VVV_PATH_TO_SITE}/log
 noroot touch ${VVV_PATH_TO_SITE}/log/nginx-error.log
 noroot touch ${VVV_PATH_TO_SITE}/log/nginx-access.log
 
-noroot touch ${VVV_PATH_TO_SITE}/public_html/index.html
+noroot mkdir -p ${VVV_PATH_TO_SITE}/public_html
