@@ -4,7 +4,7 @@
 echo " * TEST TEST TEST"
 
 ssh-keyscan -H 31.193.3.183.srvlist.ukfast.net >> /root/.ssh/known_hosts
-ssh devrelative@31.193.3.183.srvlist.ukfast.net "logout" -P 2020
+ssh devrelative@31.193.3.183.srvlist.ukfast.net "pwd" -P 2020
 
 echo " DID THE PWD"
 
