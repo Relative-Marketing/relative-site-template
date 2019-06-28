@@ -14,3 +14,6 @@ noroot touch ${VVV_PATH_TO_SITE}/log/nginx-error.log
 noroot touch ${VVV_PATH_TO_SITE}/log/nginx-access.log
 
 noroot mkdir -p ${VVV_PATH_TO_SITE}/public_html
+noroot touch ${VVV_PATH_TO_SITE}/public_html/index.html
+
+echo "Hello" > ${VVV_PATH_TO_SITE}/public_html/index.html
