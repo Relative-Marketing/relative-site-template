@@ -19,7 +19,7 @@ DB_BACKUP='vvv-db-backup.sql'
 TAR_NAME='test-delete.tar.gz'
 
 ssh-keyscan -H ${SSH_HOST} >> /root/.ssh/known_hosts
-ssh relative@${SSH_HOST} "wp db export --path=${WP_PATH} ${DB_BACKUP}; mv ${DB_BACKUP} ${WP_PATH} tar -jcvf ${TAR_NAME} ${WP_PATH}/${DB_BACKUP}; ${WP_PATH}/${DB_BACKUP}; exit;" -P 2020
+ssh relative@${SSH_HOST} "wp db export --path=${WP_PATH} ${DB_BACKUP}; mv ${DB_BACKUP} ${WP_PATH}; tar -jcvf ${TAR_NAME} ${WP_PATH}/${DB_BACKUP}; ${WP_PATH}/${DB_BACKUP}; exit;" -P 2020
 
 noroot mkdir -p ${VVV_PATH_TO_SITE}/public_html
 
