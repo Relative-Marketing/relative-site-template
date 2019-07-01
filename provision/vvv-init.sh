@@ -30,7 +30,7 @@ ssh ${SSH_USER}@${SSH_HOST} "wp db export --path=${WP_PATH} ${DB_BACKUP_NAME}; m
 noroot mkdir -p ${VVV_PATH_TO_SITE}/public_html
 
 echo "Attempting download of backup this may take some time"
-scp -P 2020 relative@${SSH_HOST}:${TAR_NAME} ${VVV_PATH_TO_SITE}
+scp -P 2020 ${SSH_USER}@${SSH_HOST}:${TAR_NAME} ${VVV_PATH_TO_SITE}
 echo "Backup downloaded, now attempting extract"
 tar -jxf ${VVV_PATH_TO_SITE}/${TAR_NAME} -C ${VVV_PATH_TO_SITE}
 
