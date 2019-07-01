@@ -14,9 +14,10 @@ echo " * Running relative marketing custom site template"
 # import the database
 
 WP_PATH='public_html'
+SSH_HOST='31.193.3.183.srvlist.ukfast.net'
 
-ssh-keyscan -H 31.193.3.183.srvlist.ukfast.net >> /root/.ssh/known_hosts
-ssh relative@31.193.3.183.srvlist.ukfast.net "wp db export --path='public_html' vvv-db-backup.sql; tar -jcvf test-delete.tar.gz vvv-db-backup.sql; exit;" -P 2020
+ssh-keyscan -H ${SSH_HOST} >> /root/.ssh/known_hosts
+ssh relative@${SSH_HOST} "wp db export --path='public_html' vvv-db-backup.sql; tar -jcvf test-delete.tar.gz vvv-db-backup.sql; exit;" -P 2020
 
 noroot mkdir -p ${VVV_PATH_TO_SITE}/public_html
 
