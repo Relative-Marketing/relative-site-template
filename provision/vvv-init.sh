@@ -21,7 +21,7 @@ ssh relative@${SSH_HOST} "wp db export --path='public_html' vvv-db-backup.sql; t
 
 noroot mkdir -p ${VVV_PATH_TO_SITE}/public_html
 
-scp -v -P 2020 relative@31.193.3.183.srvlist.ukfast.net:test-delete.tar.gz ${VVV_PATH_TO_SITE}/public_html
+scp -v -P 2020 relative@${SSH_HOST}:test-delete.tar.gz ${VVV_PATH_TO_SITE}/public_html
 
 tar -jxvf ${VVV_PATH_TO_SITE}/public_html/test-delete.tar.gz -C ${VVV_PATH_TO_SITE}/public_html
 
