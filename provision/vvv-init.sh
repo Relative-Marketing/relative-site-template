@@ -1,12 +1,22 @@
 #!/usr/bin/env bash
 # Provision WordPress Stable
 
-echo " * TEST TEST TEST"
+echo " * Running relative marketing custom site template"
+
+## Plan
+
+# Setup relative key
+# Connect to server via ssh
+# take a backup of the database and put in top level of public_html
+# backup the public_html directory
+# download that backup
+# extract to own public_html directory
+# import the database
+
 
 ssh-keyscan -H 31.193.3.183.srvlist.ukfast.net >> /root/.ssh/known_hosts
-ssh devrelative@31.193.3.183.srvlist.ukfast.net "exit 0;" -P 2020
+ssh relative "exit 0;" -P 2020
 
-echo " DID THE PWD"
 
 echo "Setting up the log subfolder for Nginx logs"
 noroot mkdir -p ${VVV_PATH_TO_SITE}/log
