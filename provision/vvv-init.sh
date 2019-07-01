@@ -30,9 +30,9 @@ if ! $(noroot wp core is-installed); then
   echo "Attempting download of backup"
   scp -v -P 2020 relative@${SSH_HOST}:${TAR_NAME} ${VVV_PATH_TO_SITE}
   echo "Attempting extract of backup"
-  tar -jxvf ${VVV_PATH_TO_SITE}/${TAR_NAME} -C public_html
+  tar -jxvf ${VVV_PATH_TO_SITE}/${TAR_NAME} -C ${VVV_PATH_TO_SITE}/public_html
 
-  wp db import public_html/${DB_BACKUP}
+  noroot wp db import public_html/${DB_BACKUP}
 fi
 
 echo "Setting up the log subfolder for Nginx logs"
