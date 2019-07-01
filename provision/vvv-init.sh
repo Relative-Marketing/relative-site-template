@@ -35,10 +35,10 @@ if ! $(noroot wp core is-installed) || FORCE_BACKUP; then
 
 fi
 
-
 noroot wp db import public_html/${DB_BACKUP} --dbuser='wp' --dbpass='wp'
 DB_NAME=`noroot wp config get DB_NAME`
 mysql -u root --password=root -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO wp@localhost IDENTIFIED BY 'wp';"
+
 noroot wp config set WP_DEBUG true --raw
 noroot wp config set DB_USER 'wp'
 noroot wp config set DB_PASSWORD 'wp'
