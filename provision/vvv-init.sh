@@ -28,7 +28,7 @@ if ! $(noroot wp core is-installed); then
   noroot mkdir -p ${VVV_PATH_TO_SITE}/public_html
 
   echo "Attempting download of backup"
-  scp -P 2020 relative@${SSH_HOST}:${TAR_NAME} ${VVV_PATH_TO_SITE}
+  scp -v -P 2020 relative@${SSH_HOST}:${TAR_NAME} ${VVV_PATH_TO_SITE}
   echo "Attempting extract of backup"
   tar -jxvf ${VVV_PATH_TO_SITE}/${TAR_NAME} -C public_html
 
