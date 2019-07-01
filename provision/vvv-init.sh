@@ -15,15 +15,17 @@ echo " * Running relative marketing custom site template"
 
 DOMAIN=`get_primary_host "${VVV_SITE_NAME}".test`
 WP_PATH='public_html'
-SSH_HOST='31.193.3.183.srvlist.ukfast.net'
-DB_BACKUP='vvv-db-backup.sql'
-TAR_NAME='vvv-backup.tar.gz'
-FORCE_BACKUP=`get_config_value 'force_backup' false`
+SSH_HOST=`get_config_value 'ssh_host' '31.193.3.183.srvlist.ukfast.net'`
+SSH_USER=`get_config_value 'ssh_user' 'relative'`
+DB_BACKUP_NAME=`get_config_value 'db_backup_name' 'vvv-db-backup.sql'`
+TAR_NAME=`get_config_value 'tar_name' 'vvv-backup.tar.gz'`
+
 
 echo "Adding ${SSH_HOST} to known_hosts"
 ssh-keyscan -H ${SSH_HOST} >> /root/.ssh/known_hosts
-echo "Attempting connection to server, backup of db and wp files"
-ssh relative@${SSH_HOST} "wp db export --path=${WP_PATH} ${DB_BACKUP}; mv ${DB_BACKUP} ${WP_PATH}/; tar -jcf ${TAR_NAME} ${WP_PATH}/* --exclude="*.tar" --exclude="*.tar.*" --exclude="*.zip" --totals; ls ${WP_PATH}; exit;" -P 2020
+
+echo "Attempting connection to server, backup of db and wp files, this may take some time"
+ssh ${SSH_USER}@${SSH_HOST} "wp db export --path=${WP_PATH} ${DB_BACKUP_NAME}; mv ${DB_BACKUP_NAME} ${WP_PATH}/; tar -jcf ${TAR_NAME} ${WP_PATH}/* --exclude="*.tar" --exclude="*.tar.*" --exclude="*.zip" --totals; ls ${WP_PATH}; exit;" -P 2020
 
 noroot mkdir -p ${VVV_PATH_TO_SITE}/public_html
 
@@ -32,21 +34,28 @@ scp -P 2020 relative@${SSH_HOST}:${TAR_NAME} ${VVV_PATH_TO_SITE}
 echo "Backup downloaded, now attempting extract"
 tar -jxf ${VVV_PATH_TO_SITE}/${TAR_NAME} -C ${VVV_PATH_TO_SITE}
 
-# noroot wp db create --dbuser='wp' --dbpass='wp'
-noroot wp db import ${VVV_PATH_TO_SITE}/public_html/${DB_BACKUP} --dbuser='wp' --dbpass='wp'
-# DB_NAME=`noroot wp config get DB_NAME`
-# mysql -u root --password=root -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO wp@localhost IDENTIFIED BY 'wp';"
+
+noroot wp db import ${VVV_PATH_TO_SITE}/public_html/${DB_BACKUP_NAME} --dbuser='wp' --dbpass='wp'
 
 noroot wp config set WP_DEBUG true --raw
 noroot wp config set DB_USER 'wp'
 noroot wp config set DB_PASSWORD 'wp'
 noroot wp config set WP_CACHE false --raw
-wp option get home --allow-root
-echo "${DOMAIN}"
-noroot wp option --debug update home "https://${DOMAIN}"
-noroot wp option --debug update siteurl "https://${DOMAIN}"
+noroot wp option update home "https://${DOMAIN}"
 
+if [ $? -eq 0 ]; then
+    echo "Home url updated successfully"
+else
+    echo "Home url could not be updated because of an error, please review the log to see what went wrong then run: wp option update home \"https://${DOMAIN}\" again."
+fi
 
+noroot wp option update siteurl "https://${DOMAIN}"
+
+if [ $? -eq 0 ]; then
+    echo "Site url updated successfully"
+else
+    echo "Site url could not be updated because of an error, please review the log to see what went wrong then run: wp option update siteurl \"https://${DOMAIN}\" again."
+fi
 
 echo "Setting up the log subfolder for Nginx logs"
 noroot mkdir -p ${VVV_PATH_TO_SITE}/log
