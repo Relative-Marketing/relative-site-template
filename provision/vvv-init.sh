@@ -31,15 +31,20 @@ if ! $(noroot wp core is-installed) || FORCE_BACKUP; then
   echo "Attempting download of backup this may take some time"
   #scp -P 2020 relative@${SSH_HOST}:${TAR_NAME} ${VVV_PATH_TO_SITE}
   echo "Backup downloaded, now attempting extract"
-  tar -jxvf ${VVV_PATH_TO_SITE}/${TAR_NAME} -C ${VVV_PATH_TO_SITE}
+  #tar -jxvf ${VVV_PATH_TO_SITE}/${TAR_NAME} -C ${VVV_PATH_TO_SITE}
 
-  noroot wp db import public_html/${DB_BACKUP} --dbuser='wp' --dbpass='wp'
-  noroot wp config set WP_DEBUG true --raw
-  noroot wp config set DB_USER 'wp'
-  noroot wp config set DB_PASSWORD 'wp'
-  noroot wp option update home ${DOMAIN}
-  noroot wp option update siteurl ${DOMAIN}
 fi
+
+noroot wp db import public_html/${DB_BACKUP} --dbuser='wp' --dbpass='wp'
+noroot wp config set WP_DEBUG true --raw
+noroot wp config set DB_USER 'wp'
+noroot wp config set DB_PASSWORD 'wp'
+noroot wp option update home ${DOMAIN}
+noroot wp option update siteurl ${DOMAIN}
+
+DB_NAME=`wp config get DB_NAME`
+
+mysql -u root --password=root -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO wp@localhost IDENTIFIED BY 'wp';"
 
 echo "Setting up the log subfolder for Nginx logs"
 noroot mkdir -p ${VVV_PATH_TO_SITE}/log
