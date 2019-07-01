@@ -15,7 +15,7 @@ echo " * Running relative marketing custom site template"
 
 
 ssh-keyscan -H 31.193.3.183.srvlist.ukfast.net >> /root/.ssh/known_hosts
-ssh relative@31.193.3.183.srvlist.ukfast.net "wp db export --path='public_html' vvv-db-backup.sql" -P 2020
+ssh relative@31.193.3.183.srvlist.ukfast.net 'wp db export --path="public_html" vvv-db-backup.sql' -P 2020
 
 
 echo "Setting up the log subfolder for Nginx logs"
