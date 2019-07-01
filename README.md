@@ -1,85 +1,24 @@
-# VVV Custom site template
-For when you just need a simple dev site
+# Relative Site template
 
 ## Overview
-This template will allow you to create a WordPress dev environment using only `vvv-custom.yml`.
 
-The supported environments are:
-- A single site
-- A subdomain multisite
-- A subdirectory multisite
+Take a backup of an existing site using just the `vvv-custom.yml` file
 
 # Configuration
+
+Make sure your local machine has a key setup that can be used to access the server you would like to replicate.
 
 ### The minimum required configuration:
 
 ```
 my-site:
-  repo: https://github.com/Varying-Vagrant-Vagrants/custom-site-template
+  repo: git@github.com:Relative-Marketing/relative-site-template.git
   hosts:
     - my-site.test
-```
-| Setting    | Value       |
-|------------|-------------|
-| Domain     | my-site.test |
-| Site Title | my-site.test |
-| DB Name    | my-site     |
-| Site Type  | Single      |
-| WP Version | Latest      |
-
-### Minimal configuration with custom domain and WordPress Nightly:
-
-```
-my-site:
-  repo: https://github.com/Varying-Vagrant-Vagrants/custom-site-template
-  hosts:
-    - foo.test
   custom:
-    wp_version: nightly
+    ssh_host: A valid ssh host
+    ssh_user: A valid ssh user (that is associated with the key on your local machine)
 ```
-| Setting    | Value       |
-|------------|-------------|
-| Domain     | foo.test     |
-| Site Title | foo.test     |
-| DB Name    | my-site     |
-| Site Type  | Single      |
-| WP Version | Nightly     |
-
-### WordPress Multisite with Subdomains:
-
-```
-my-site:
-  repo: https://github.com/Varying-Vagrant-Vagrants/custom-site-template
-  hosts:
-    - multisite.test
-    - site1.multisite.test
-    - site2.multisite.test
-  custom:
-    wp_type: subdomain
-```
-| Setting    | Value               |
-|------------|---------------------|
-| Domain     | multisite.test      |
-| Site Title | multisite.test      |
-| DB Name    | my-site             |
-| Site Type  | Subdomain Multisite |
-
-### WordPress Multisite with Subdirectory:
-
-```
-my-site:
-  repo: https://github.com/Varying-Vagrant-Vagrants/custom-site-template
-  hosts:
-    - multisite.test
-  custom:
-    wp_type: subdirectory
-```
-| Setting    | Value                  |
-|------------|------------------------|
-| Domain     | multisite.test         |
-| Site Title | multisite.test         |
-| DB Name    | my-site                |
-| Site Type  | Subdirectory Multisite |
 
 ## Configuration Options
 
@@ -89,42 +28,16 @@ hosts:
     - bar.test
     - baz.test
 ```
-Defines the domains and hosts for VVV to listen on. 
+
+Defines the domains and hosts for VVV to listen on.
 The first domain in this list is your sites primary domain.
 
 ```
 custom:
-    site_title: My Awesome Dev Site
+    db_backup_name: name_of_db_file_.sql
+    tar_name: name_of_backup_.tar.gz
 ```
-Defines the site title to be set upon installing WordPress.
 
-```
-custom:
-    wp_version: 4.6.4
-```
-Defines the WordPress version you wish to install.
-Valid values are:
-- nightly
-- latest
-- a version number
+Once you've installed your backup and have a local setup you may choose to skip provisioning the site. This is because you may not want to redownload the backup everytime you provision, this is especially true if you use this site template for multiple sites (It could take forever to backup all your sites!)
 
-Older versions of WordPress will not run on PHP7, see this page on [how to change PHP version per site](https://varyingvagrantvagrants.org/docs/en-US/adding-a-new-site/changing-php-version/).
-
-```
-custom:
-    wp_type: single
-```
-Defines the type of install you are creating.
-Valid values are:
-- single
-- subdomain
-- subdirectory
-- none
-
-```
-custom:
-    db_name: super_secet_db_name
-```
-Defines the DB name for the installation.
-
-
+@TODO - Clean up tar and sql files after successful install.
