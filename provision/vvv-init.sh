@@ -43,8 +43,9 @@ noroot wp db import ${VVV_PATH_TO_SITE}/public_html/${DB_BACKUP} --dbuser='wp' -
 noroot wp config set WP_DEBUG true --raw
 noroot wp config set DB_USER 'wp'
 noroot wp config set DB_PASSWORD 'wp'
-noroot wp option update home ${DOMAIN}
-noroot wp option update siteurl ${DOMAIN}
+noroot wp config set WP_CACHE false --raw
+noroot wp option update home "${DOMAIN}"
+noroot wp option update siteurl "${DOMAIN}"
 
 
 
