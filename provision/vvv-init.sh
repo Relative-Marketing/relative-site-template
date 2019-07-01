@@ -19,13 +19,17 @@ DB_BACKUP='vvv-db-backup.sql'
 TAR_NAME='vvv-backup.tar.gz'
 
 if ! $(noroot wp core is-installed); then
+
+  echo "Adding ${SSH_HOST} to known_hosts"
   ssh-keyscan -H ${SSH_HOST} >> /root/.ssh/known_hosts
+  echo "Attempting connection to server, backup of db and wp files"
   ssh relative@${SSH_HOST} "wp db export --path=${WP_PATH} ${DB_BACKUP}; mv ${DB_BACKUP} ${WP_PATH}/; tar -jcvf ${TAR_NAME} ${WP_PATH}/* --exclude="*.tar" --exclude="*.tar.*" --exclude="*.zip" --totals; ls ${WP_PATH}; exit;" -P 2020
 
   noroot mkdir -p ${VVV_PATH_TO_SITE}/public_html
 
+  echo "Attempting download of backup"
   scp -P 2020 relative@${SSH_HOST}:${TAR_NAME} ${VVV_PATH_TO_SITE}
-
+  echo "Attempting extract of backup"
   tar -jxvf ${VVV_PATH_TO_SITE}/${TAR_NAME} -C public_html
 
   wp db import public_html/${DB_BACKUP}
