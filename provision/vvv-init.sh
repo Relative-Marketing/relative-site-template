@@ -46,8 +46,8 @@ noroot wp config set DB_PASSWORD 'wp'
 noroot wp config set WP_CACHE false --raw
 wp option get home --allow-root
 echo "${DOMAIN}"
-noroot wp option --debug update home "${DOMAIN}"
-noroot wp option --debug update siteurl "${DOMAIN}"
+noroot wp option --debug update home "https://${DOMAIN}"
+noroot wp option --debug update siteurl "https://${DOMAIN}"
 
 
 
