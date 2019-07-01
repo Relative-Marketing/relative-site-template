@@ -19,21 +19,18 @@ SSH_HOST='31.193.3.183.srvlist.ukfast.net'
 DB_BACKUP='vvv-db-backup.sql'
 TAR_NAME='vvv-backup.tar.gz'
 FORCE_BACKUP=`get_config_value 'force_backup' false`
-if ! $(noroot wp core is-installed) || FORCE_BACKUP; then
 
-  echo "Adding ${SSH_HOST} to known_hosts"
-  ssh-keyscan -H ${SSH_HOST} >> /root/.ssh/known_hosts
-  echo "Attempting connection to server, backup of db and wp files"
-  #ssh relative@${SSH_HOST} "wp db export --path=${WP_PATH} ${DB_BACKUP}; mv ${DB_BACKUP} ${WP_PATH}/; tar -jcvf ${TAR_NAME} ${WP_PATH}/* --exclude="*.tar" --exclude="*.tar.*" --exclude="*.zip" --totals; ls ${WP_PATH}; exit;" -P 2020
+echo "Adding ${SSH_HOST} to known_hosts"
+ssh-keyscan -H ${SSH_HOST} >> /root/.ssh/known_hosts
+echo "Attempting connection to server, backup of db and wp files"
+ssh relative@${SSH_HOST} "wp db export --path=${WP_PATH} ${DB_BACKUP}; mv ${DB_BACKUP} ${WP_PATH}/; tar -jcf ${TAR_NAME} ${WP_PATH}/* --exclude="*.tar" --exclude="*.tar.*" --exclude="*.zip" --totals; ls ${WP_PATH}; exit;" -P 2020
 
-  noroot mkdir -p ${VVV_PATH_TO_SITE}/public_html
+noroot mkdir -p ${VVV_PATH_TO_SITE}/public_html
 
-  echo "Attempting download of backup this may take some time"
-  #scp -P 2020 relative@${SSH_HOST}:${TAR_NAME} ${VVV_PATH_TO_SITE}
-  echo "Backup downloaded, now attempting extract"
-  #tar -jxvf ${VVV_PATH_TO_SITE}/${TAR_NAME} -C ${VVV_PATH_TO_SITE}
-
-fi
+echo "Attempting download of backup this may take some time"
+scp -P 2020 relative@${SSH_HOST}:${TAR_NAME} ${VVV_PATH_TO_SITE}
+echo "Backup downloaded, now attempting extract"
+tar -jxf ${VVV_PATH_TO_SITE}/${TAR_NAME} -C ${VVV_PATH_TO_SITE}
 
 # noroot wp db create --dbuser='wp' --dbpass='wp'
 noroot wp db import ${VVV_PATH_TO_SITE}/public_html/${DB_BACKUP} --dbuser='wp' --dbpass='wp'
