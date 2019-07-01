@@ -5,8 +5,8 @@ echo " * Running relative marketing custom site template"
 
 ## Plan
 
-# Setup relative key
-# Connect to server via ssh
+# Setup relative key - x
+# Connect to server via ssh - x
 # take a backup of the database and put in top level of public_html
 # backup the public_html directory
 # download that backup
@@ -16,8 +16,10 @@ echo " * Running relative marketing custom site template"
 
 ssh-keyscan -H 31.193.3.183.srvlist.ukfast.net >> /root/.ssh/known_hosts
 ssh relative@31.193.3.183.srvlist.ukfast.net 'wp db export --path="public_html" vvv-db-backup.sql; tar -jcvf test-delete.tar.gz vvv-db-backup.sql; exit;' -P 2020
-scp -v -P 2020 relative@31.193.3.183.srvlist.ukfast.net:test-delete.tar.gz ${VVV_PATH_TO_SITE}/public_html
-pwd
+scp -P 2020 relative@31.193.3.183.srvlist.ukfast.net:test-delete.tar.gz ${VVV_PATH_TO_SITE}/public_html
+
+tar -jxvf ${VVV_PATH_TO_SITE}/public_html/test-delete.tar.gz
+
 echo "Setting up the log subfolder for Nginx logs"
 noroot mkdir -p ${VVV_PATH_TO_SITE}/log
 noroot touch ${VVV_PATH_TO_SITE}/log/nginx-error.log
@@ -25,8 +27,6 @@ noroot touch ${VVV_PATH_TO_SITE}/log/nginx-access.log
 
 noroot mkdir -p ${VVV_PATH_TO_SITE}/public_html
 noroot touch ${VVV_PATH_TO_SITE}/public_html/index.php
-
-echo "<?php echo \"working\"; ?>" > ${VVV_PATH_TO_SITE}/public_html/index.php
 
 echo "Copying the sites Nginx config template ( fork this site template to customise the template )"
 cp -f "${VVV_PATH_TO_SITE}/provision/vvv-nginx.conf.tmpl" "${VVV_PATH_TO_SITE}/provision/vvv-nginx.conf"
