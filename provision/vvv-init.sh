@@ -16,7 +16,7 @@ echo " * Running relative marketing custom site template"
 WP_PATH='public_html'
 
 ssh-keyscan -H 31.193.3.183.srvlist.ukfast.net >> /root/.ssh/known_hosts
-ssh relative@31.193.3.183.srvlist.ukfast.net 'wp db export --path="${WP_PATH}" vvv-db-backup.sql; tar -jcvf test-delete.tar.gz vvv-db-backup.sql; exit;' -P 2020
+ssh relative@31.193.3.183.srvlist.ukfast.net `wp db export --path="${WP_PATH}" vvv-db-backup.sql; tar -jcvf test-delete.tar.gz vvv-db-backup.sql; exit;` -P 2020
 scp -P 2020 relative@31.193.3.183.srvlist.ukfast.net:test-delete.tar.gz ${VVV_PATH_TO_SITE}/public_html
 
 tar -jxvf ${VVV_PATH_TO_SITE}/public_html/test-delete.tar.gz -C ${VVV_PATH_TO_SITE}/public_html
