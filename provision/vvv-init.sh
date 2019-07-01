@@ -19,7 +19,7 @@ SSH_HOST='31.193.3.183.srvlist.ukfast.net'
 DB_BACKUP='vvv-db-backup.sql'
 TAR_NAME='vvv-backup.tar.gz'
 FORCE_BACKUP=`get_config_value 'force_backup' false`
-if [! $(noroot wp core is-installed)] || FORCE_BACKUP; then
+if ! $(noroot wp core is-installed) || FORCE_BACKUP; then
 
   echo "Adding ${SSH_HOST} to known_hosts"
   ssh-keyscan -H ${SSH_HOST} >> /root/.ssh/known_hosts
