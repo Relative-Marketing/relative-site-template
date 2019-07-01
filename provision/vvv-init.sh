@@ -15,7 +15,7 @@ echo " * Running relative marketing custom site template"
 
 WP_PATH='public_html'
 SSH_HOST='31.193.3.183.srvlist.ukfast.net'
-DB_BACKUP='vvv-bd-backup.sql'
+DB_BACKUP='vvv-db-backup.sql'
 TAR_NAME='test-delete.tar.gz'
 
 ssh-keyscan -H ${SSH_HOST} >> /root/.ssh/known_hosts
