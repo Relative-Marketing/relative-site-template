@@ -25,7 +25,7 @@ echo "Adding ${SSH_HOST} to known_hosts"
 ssh-keyscan -H ${SSH_HOST} >> /root/.ssh/known_hosts
 
 echo "Attempting connection to server, backup of db and wp files, this may take some time"
-ssh ${SSH_USER}@${SSH_HOST} "wp db export --path=${WP_PATH} ${DB_BACKUP_NAME}; mv ${DB_BACKUP_NAME} ${WP_PATH}/; tar -jcf ${TAR_NAME} ${WP_PATH}/* --exclude="*.tar" --exclude="*.tar.*" --exclude="*.zip" --totals; ls ${WP_PATH}; exit;" -P 2020
+ssh ${SSH_USER}@${SSH_HOST} "wp db export --path=${WP_PATH} ${DB_BACKUP_NAME}; mv ${DB_BACKUP_NAME} ${WP_PATH}/; tar -jcf ${TAR_NAME} ${WP_PATH}/* --exclude="*.tar" --exclude="*.tar.gz" --exclude="*.zip" --totals; ls ${WP_PATH}; exit;" -P 2020
 
 noroot mkdir -p ${VVV_PATH_TO_SITE}/public_html
 
