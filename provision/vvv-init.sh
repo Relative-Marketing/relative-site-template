@@ -18,16 +18,19 @@ SSH_HOST='31.193.3.183.srvlist.ukfast.net'
 DB_BACKUP='vvv-db-backup.sql'
 TAR_NAME='vvv-backup.tar.gz'
 
-ssh-keyscan -H ${SSH_HOST} >> /root/.ssh/known_hosts
-ssh relative@${SSH_HOST} "wp db export --path=${WP_PATH} ${DB_BACKUP}; mv ${DB_BACKUP} ${WP_PATH}/; tar -jcvf ${TAR_NAME} ${WP_PATH}/*; ls ${WP_PATH}; exit;" -P 2020
+if ! $(noroot wp core is-installed); then
+  ssh-keyscan -H ${SSH_HOST} >> /root/.ssh/known_hosts
+  ssh relative@${SSH_HOST} "wp db export --path=${WP_PATH} ${DB_BACKUP}; mv ${DB_BACKUP} ${WP_PATH}/; tar -jcvf ${TAR_NAME} ${WP_PATH}/* --exclude="*.tar" --exclude="*.tar.*" --exclude="*.zip" --totals; ls ${WP_PATH}; exit;" -P 2020
 
-noroot mkdir -p ${VVV_PATH_TO_SITE}/public_html
+  noroot mkdir -p ${VVV_PATH_TO_SITE}/public_html
 
-scp -P 2020 relative@${SSH_HOST}:${TAR_NAME} ${VVV_PATH_TO_SITE}
+  scp -P 2020 relative@${SSH_HOST}:${TAR_NAME} ${VVV_PATH_TO_SITE}
 
-tar -jxvf ${VVV_PATH_TO_SITE}/${TAR_NAME} -C public_html
+  tar -jxvf ${VVV_PATH_TO_SITE}/${TAR_NAME} -C public_html
 
-wp db import public_html/${DB_BACKUP}
+  wp db import public_html/${DB_BACKUP}
+fi
+
 echo "Setting up the log subfolder for Nginx logs"
 noroot mkdir -p ${VVV_PATH_TO_SITE}/log
 noroot touch ${VVV_PATH_TO_SITE}/log/nginx-error.log
