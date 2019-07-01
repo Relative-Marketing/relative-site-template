@@ -18,7 +18,7 @@ SSH_HOST='31.193.3.183.srvlist.ukfast.net'
 DB_BACKUP='vvv-bd-backup.sql'
 
 ssh-keyscan -H ${SSH_HOST} >> /root/.ssh/known_hosts
-ssh relative@${SSH_HOST} "wp db export --path='public_html' ${DB_BACKUP}; tar -jcvf test-delete.tar.gz ${DB_BACKUP}; exit;" -P 2020
+ssh relative@${SSH_HOST} "wp db export --path=${WP_PATH} ${DB_BACKUP}; tar -jcvf test-delete.tar.gz ${DB_BACKUP}; exit;" -P 2020
 
 noroot mkdir -p ${VVV_PATH_TO_SITE}/public_html
 
