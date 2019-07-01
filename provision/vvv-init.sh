@@ -13,12 +13,13 @@ echo " * Running relative marketing custom site template"
 # extract to own public_html directory
 # import the database
 
+DOMAIN=`get_primary_host "${VVV_SITE_NAME}".test`
 WP_PATH='public_html'
 SSH_HOST='31.193.3.183.srvlist.ukfast.net'
 DB_BACKUP='vvv-db-backup.sql'
 TAR_NAME='vvv-backup.tar.gz'
-
-if ! $(noroot wp core is-installed); then
+FORCE_BACKUP=`get_config_value 'force_backup' false`
+if [! $(noroot wp core is-installed)] || ; then
 
   echo "Adding ${SSH_HOST} to known_hosts"
   ssh-keyscan -H ${SSH_HOST} >> /root/.ssh/known_hosts
@@ -27,12 +28,17 @@ if ! $(noroot wp core is-installed); then
 
   noroot mkdir -p ${VVV_PATH_TO_SITE}/public_html
 
-  echo "Attempting download of backup"
-  scp -v -P 2020 relative@${SSH_HOST}:${TAR_NAME} ${VVV_PATH_TO_SITE}
-  echo "Attempting extract of backup"
-  tar -jxvf ${VVV_PATH_TO_SITE}/${TAR_NAME} -C ${VVV_PATH_TO_SITE}/public_html
+  echo "Attempting download of backup this may take some time"
+  #scp -P 2020 relative@${SSH_HOST}:${TAR_NAME} ${VVV_PATH_TO_SITE}
+  echo "Backup downloaded, now attempting extract"
+  tar -jxvf ${VVV_PATH_TO_SITE}/${TAR_NAME} -C ${VVV_PATH_TO_SITE}
 
-  noroot wp db import public_html/${DB_BACKUP}
+  noroot wp db import public_html/${DB_BACKUP} --dbuser='wp' --dbpass='wp'
+  noroot wp config set WP_DEBUG true --raw
+  noroot wp config set DB_USER 'wp'
+  noroot wp config set DB_PASSWORD 'wp'
+  noroot wp option update home ${DOMAIN}
+  noroot wp option update siteurl ${DOMAIN}
 fi
 
 echo "Setting up the log subfolder for Nginx logs"
