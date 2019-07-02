@@ -38,14 +38,17 @@ exec_scp_cmd()
 
 setup_wp_db()
 {
+    noroot wp db create --dbuser='wp' --dbpass='wp'
     noroot wp db import ${VVV_PATH_TO_SITE}/${DB_BACKUP_NAME} --dbuser='wp' --dbpass='wp'
 
-    noroot wp config set WP_DEBUG true --raw
     noroot wp config set DB_USER 'wp'
     noroot wp config set DB_PASSWORD 'wp'
     noroot wp config set WP_CACHE false --raw
-    noroot wp option update home "https://${DOMAIN}"
 
+    # Turn error reporting off whilst updating urls
+    noroot wp config set WP_DEBUG false --raw
+
+    noroot wp option update home "https://${DOMAIN}"
     if [ $? -eq 0 ]; then
         echo "Home url updated successfully"
     else
@@ -59,6 +62,8 @@ setup_wp_db()
     else
         echo "Site url could not be updated because of an error, please review the log to see what went wrong then run: wp option update siteurl \"https://${DOMAIN}\" again."
     fi
+
+    noroot wp config set WP_DEBUG true --raw
 }
 
 provision_db()
@@ -66,12 +71,12 @@ provision_db()
     echo "Attempting backup of database"
     exec_ssh_cmd "wp db export --path=${WP_PATH} ${DB_BACKUP_NAME}; exit;"
     
-    if [$? -eq 0]; then
+    if [ $? -eq 0 ]; then
         echo "Database backup succeeded"
         echo "Downloading database backup"
         exec_scp_cmd ${DB_BACKUP_NAME}
 
-        if [$? -eq 0]; then
+        if [ $? -eq 0 ]; then
             echo "Database download success"
             echo "Attempting database import"
             setup_wp_db
@@ -84,13 +89,13 @@ provision_db()
 provision_files()
 {
     echo "Attempting to create a compressed backup for download, this may take some time"
-    exec_ssh_cmd "tar -jcvf ${TAR_NAME} ${WP_PATH}/* --exclude=\"*.tar\" --exclude=\"*.tar.gz\" --exclude=\"*.zip\" --totals; exit;"
+    exec_ssh_cmd "tar -jcvf ${TAR_NAME} ${WP_PATH}/* --exclude=\"*.tar\" --exclude=\"*.tar.gz\" --exclude=\"*.zip\" --exclude=\"*.tmp\" --totals; exit;"
 
-    if [$? -eq 0]; then
+    if [ $? -eq 0 ]; then
         echo "Backup created attempting download"
         exec_scp_cmd ${TAR_NAME}
 
-        if [$? -eq 0]; then
+        if [ $? -eq 0 ]; then
             echo "Backup downloaded successfully, extracting backup"
             tar -jxf ${VVV_PATH_TO_SITE}/${TAR_NAME} -C ${VVV_PATH_TO_SITE}
         fi
@@ -107,16 +112,16 @@ ssh-keyscan -H ${SSH_HOST} >> /root/.ssh/known_hosts
 
 noroot mkdir -p ${VVV_PATH_TO_SITE}/public_html
 
-if [${PROVISION_TYPE} == 'all'] then
+if [[ $PROVISION_TYPE == 'all' ]]; then
     provision_files
     provision_db
 fi
 
-if [${PROVISION_TYPE} == 'files'] then
+if [[ $PROVISION_TYPE == 'files' ]]; then
     provision_files
 fi
 
-if [${PROVISION_TYPE} == 'db'] then
+if [[ $PROVISION_TYPE == 'db' ]]; then
     provision_db
 fi
 
