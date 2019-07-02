@@ -40,7 +40,7 @@ setup_wp_db()
 {
     noroot wp config set DB_USER 'wp'
     noroot wp config set DB_PASSWORD 'wp'
-    noroot wp db create --dbuser='wp' --dbpass='wp' || true
+    noroot wp db create --dbuser='wp' --dbpass='wp'
     noroot wp db import ${VVV_PATH_TO_SITE}/${DB_BACKUP_NAME} --dbuser='wp' --dbpass='wp'
 
     noroot wp config set WP_CACHE false --raw
