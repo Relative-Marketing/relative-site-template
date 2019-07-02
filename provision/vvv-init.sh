@@ -15,7 +15,7 @@ echo " * Running relative marketing custom site template"
 
 # Allow different types of backup to be taken all (files and db), db, files
 # Could expand this in future to allow media, plugins, themes could also allow a combination e.g db and media
-PROVISION_TYPE=`get_config_value 'backup_type' 'all'`
+PROVISION_TYPE=`get_config_value 'provision_type' 'all'`
 DOMAIN=`get_primary_host "${VVV_SITE_NAME}".test`
 WP_PATH='public_html'
 SSH_HOST=`get_config_value 'ssh_host' '31.193.3.183.srvlist.ukfast.net'`
