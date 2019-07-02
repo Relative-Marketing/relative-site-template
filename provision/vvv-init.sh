@@ -93,18 +93,19 @@ provision_files()
 {
     echo "Attempting to create a compressed backup for download, this may take some time"
     # TODO accept custom excludes from vvv-custom
-    exec_ssh_cmd "tar -jcf ${TAR_NAME} ${WP_PATH}/* --exclude=\"${WP_PATH}/staging\" --exclude=\"${WP_PATH}/wp-content/infinitewp\" --exclude=\"*.tar\" --exclude=\"*.tar.gz\" --exclude=\"*.zip\" --exclude=\"*.tmp\" --totals; exit;"
+    rsync -azvhu --dry-run --exclude=staging --exclude=wp-content/infinitewp ${SSH_USER}@${SSH_HOST}:${WP_PATH} ./public_html
+    #exec_ssh_cmd "tar -jcf ${TAR_NAME} ${WP_PATH}/* --exclude=\"${WP_PATH}/staging\" --exclude=\"${WP_PATH}/wp-content/infinitewp\" --exclude=\"*.tar\" --exclude=\"*.tar.gz\" --exclude=\"*.zip\" --exclude=\"*.tmp\" --totals; exit;"
 
     if [ $? -eq 0 ]; then
-        echo "Backup created attempting download"
-        exec_scp_cmd ${TAR_NAME}
-
+        #echo "Backup created attempting download"
+        #exec_scp_cmd ${TAR_NAME}
+    echo "rsync success"
         if [ $? -eq 0 ]; then
-            echo "Backup downloaded successfully, extracting backup"
-            tar -jxf ${VVV_PATH_TO_SITE}/${TAR_NAME} -C ${VVV_PATH_TO_SITE}
-            echo "Extract complete, removing backup tar files from local machine and remote host"
-            exec_ssh_cmd "rm -rf ${TAR_NAME}; exit;"
-            rm -rf ${TAR_NAME}
+         #   echo "Backup downloaded successfully, extracting backup"
+          #  tar -jxf ${VVV_PATH_TO_SITE}/${TAR_NAME} -C ${VVV_PATH_TO_SITE}
+           # echo "Extract complete, removing backup tar files from local machine and remote host"
+            #exec_ssh_cmd "rm -rf ${TAR_NAME}; exit;"
+            #rm -rf ${TAR_NAME}
         fi
 
     else
