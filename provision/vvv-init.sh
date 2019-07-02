@@ -100,13 +100,6 @@ provision_files()
         #echo "Backup created attempting download"
         #exec_scp_cmd ${TAR_NAME}
     echo "rsync success"
-        if [ $? -eq 0 ]; then
-         #   echo "Backup downloaded successfully, extracting backup"
-          #  tar -jxf ${VVV_PATH_TO_SITE}/${TAR_NAME} -C ${VVV_PATH_TO_SITE}
-           # echo "Extract complete, removing backup tar files from local machine and remote host"
-            #exec_ssh_cmd "rm -rf ${TAR_NAME}; exit;"
-            #rm -rf ${TAR_NAME}
-        fi
 
     else
         echo "FAILED to create complete TAR file, this could be due to incorrect file permissions"
