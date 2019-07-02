@@ -89,7 +89,7 @@ provision_db()
 provision_files()
 {
     echo "Attempting to create a compressed backup for download, this may take some time"
-    exec_ssh_cmd "tar -jcvf ${TAR_NAME} ${WP_PATH}/* --exclude=\"*.tar\" --exclude=\"*.tar.gz\" --exclude=\"*.zip\" --totals; exit;"
+    exec_ssh_cmd "tar -jcvf ${TAR_NAME} ${WP_PATH}/* --exclude=\"*.tar\" --exclude=\"*.tar.gz\" --exclude=\"*.zip\" --exclude=\"*.tmp\" --totals; exit;"
 
     if [ $? -eq 0 ]; then
         echo "Backup created attempting download"
