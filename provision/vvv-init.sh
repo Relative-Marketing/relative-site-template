@@ -24,6 +24,8 @@ SSH_PORT=`get_config_value 'ssh_port' '2020'`
 DB_BACKUP_NAME=`get_config_value 'db_backup_name' 'vvv-db-backup.sql'`
 TAR_NAME=`get_config_value 'tar_name' 'vvv-backup.tar.gz'`
 
+TAR_EXCLUDES=`get_config_value 'tar_excludes' 'false'`
+
 # $1: string - The command to run
 exec_ssh_cmd()
 {
@@ -129,6 +131,10 @@ fi
 
 if [[ $PROVISION_TYPE == 'db' ]]; then
     provision_db
+fi
+
+if [[ $PROVISION_TYPE == 'test']] then
+    echo $TAR_EXCLUDES
 fi
 
 # Here we need to decide what we're doing based on the backup type
