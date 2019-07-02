@@ -93,7 +93,7 @@ provision_files()
 {
     echo "Attempting to create a compressed backup for download, this may take some time"
     # TODO accept custom excludes from vvv-custom
-    rsync -azvhu --dry-run --exclude=staging --exclude=wp-content/infinitewp ${SSH_USER}@${SSH_HOST}:${WP_PATH} ./public_html
+    rsync -azvhu --exclude=staging --exclude=wp-content/infinitewp ${SSH_USER}@${SSH_HOST}:${WP_PATH} ./public_html
     #exec_ssh_cmd "tar -jcf ${TAR_NAME} ${WP_PATH}/* --exclude=\"${WP_PATH}/staging\" --exclude=\"${WP_PATH}/wp-content/infinitewp\" --exclude=\"*.tar\" --exclude=\"*.tar.gz\" --exclude=\"*.zip\" --exclude=\"*.tmp\" --totals; exit;"
 
     if [ $? -eq 0 ]; then
