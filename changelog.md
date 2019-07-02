@@ -1,5 +1,14 @@
 #Changelog
 
+# Unreleased
+
+# Added
+
+- Remove error if db already exists
+- Remote Server cleanup once backup ops are completed
+  - Delete db backup
+  - Delete file backup
+
 # 1.0.2 - 2019-07-02
 
 # Fixed
