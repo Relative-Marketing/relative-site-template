@@ -1,6 +1,6 @@
 #Changelog
 
-# Unreleased
+# 1.0.2 - 2019-07-02
 
 # Fixed
 
