@@ -24,9 +24,6 @@ SSH_PORT=`get_config_value 'ssh_port' '2020'`
 DB_BACKUP_NAME=`get_config_value 'db_backup_name' 'vvv-db-backup.sql'`
 TAR_NAME=`get_config_value 'tar_name' 'vvv-backup.tar.gz'`
 
-# rename tar to tar excludes
-TAR_EXCLUDES=`get_config_value 'excludes' 'false'`
-
 # $1: string - The command to run
 exec_ssh_cmd()
 {
@@ -95,7 +92,8 @@ provision_db()
 provision_files()
 {
     echo "Attempting to create a compressed backup for download, this may take some time"
-    exec_ssh_cmd "tar -jcvf ${TAR_NAME} ${WP_PATH}/* --exclude=\"*.tar\" --exclude=\"*.tar.gz\" --exclude=\"*.zip\" --exclude=\"*.tmp\" --totals; exit;"
+    # TODO accept custom excludes from vvv-custom
+    exec_ssh_cmd "tar -jcvf ${TAR_NAME} ${WP_PATH}/* --exclude=\"${WP_PATH}/staging\" --exclude=\"${WP_PATH}/wp-content/infinitewp\" --exclude=\"*.tar\" --exclude=\"*.tar.gz\" --exclude=\"*.zip\" --exclude=\"*.tmp\" --totals; exit;"
 
     if [ $? -eq 0 ]; then
         echo "Backup created attempting download"
@@ -132,17 +130,6 @@ fi
 
 if [[ $PROVISION_TYPE == 'db' ]]; then
     provision_db
-fi
-
-if [[ $PROVISION_TYPE == 'test' ]]; then
-    echo ${TAR_EXCLUDES}
-
-    IFS='- ' read -ra ADDR <<< "$TAR_EXCLUDES"
-
-    for i in "${ADDR[@]}"; do
-        # process "$i"
-        echo $i
-    done
 fi
 
 # Here we need to decide what we're doing based on the backup type
