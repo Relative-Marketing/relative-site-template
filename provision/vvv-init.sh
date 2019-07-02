@@ -38,7 +38,7 @@ exec_scp_cmd()
 
 setup_wp_db()
 {
-    noroot wp db create --dbuser='wp' --dbpass='wp'
+    noroot wp db create --dbuser='wp' --dbpass='wp' || true
     noroot wp db import ${VVV_PATH_TO_SITE}/${DB_BACKUP_NAME} --dbuser='wp' --dbpass='wp'
 
     noroot wp config set DB_USER 'wp'
@@ -80,6 +80,9 @@ provision_db()
             echo "Database download success"
             echo "Attempting database import"
             setup_wp_db
+            echo "Removing DB backup files"
+            exec_ssh_cmd "rm -rf ${DB_BACKUP_NAME}; exit;"
+            rm -rf ${DB_BACKUP_NAME}
         fi
     else
         echo "FAILED Database backup"
@@ -98,6 +101,9 @@ provision_files()
         if [ $? -eq 0 ]; then
             echo "Backup downloaded successfully, extracting backup"
             tar -jxf ${VVV_PATH_TO_SITE}/${TAR_NAME} -C ${VVV_PATH_TO_SITE}
+            echo "Extract complete, removing backup tar files from local machine and remote host"
+            exec_ssh_cmd "rm -rf ${TAR_NAME}; exit;"
+            rm -rf ${TAR_NAME}
         fi
 
     else
