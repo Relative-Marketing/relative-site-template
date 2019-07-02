@@ -135,7 +135,7 @@ if [[ $PROVISION_TYPE == 'db' ]]; then
 fi
 
 if [[ $PROVISION_TYPE == 'test' ]]; then
-    echo {$TAR_EXCLUDES}
+    echo ${TAR_EXCLUDES}
 fi
 
 # Here we need to decide what we're doing based on the backup type
