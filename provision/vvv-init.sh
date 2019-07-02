@@ -38,11 +38,11 @@ exec_scp_cmd()
 
 setup_wp_db()
 {
+    noroot wp config set DB_USER 'wp'
+    noroot wp config set DB_PASSWORD 'wp'
     noroot wp db create --dbuser='wp' --dbpass='wp' || true
     noroot wp db import ${VVV_PATH_TO_SITE}/${DB_BACKUP_NAME} --dbuser='wp' --dbpass='wp'
 
-    noroot wp config set DB_USER 'wp'
-    noroot wp config set DB_PASSWORD 'wp'
     noroot wp config set WP_CACHE false --raw
 
     # Turn error reporting off whilst updating urls
@@ -108,7 +108,7 @@ provision_files()
         fi
 
     else
-        echo "FAILED Database backup"
+        echo "FAILED to create complete TAR file, this could be due to incorrect file permissions"
     fi
 }
 
