@@ -137,7 +137,7 @@ fi
 if [[ $PROVISION_TYPE == 'test' ]]; then
     echo ${TAR_EXCLUDES}
 
-    IFS=';' read -ra ADDR <<< "$TAR_EXCLUDES"
+    IFS='- ' read -ra ADDR <<< "$TAR_EXCLUDES"
 
     for i in "${ADDR[@]}"; do
         # process "$i"
