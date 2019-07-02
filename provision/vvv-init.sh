@@ -24,7 +24,8 @@ SSH_PORT=`get_config_value 'ssh_port' '2020'`
 DB_BACKUP_NAME=`get_config_value 'db_backup_name' 'vvv-db-backup.sql'`
 TAR_NAME=`get_config_value 'tar_name' 'vvv-backup.tar.gz'`
 
-TAR_EXCLUDES=`get_config_value 'tar_excludes' 'false'`
+# rename tar to tar excludes
+TAR_EXCLUDES=`get_config_value 'excludes' 'false'`
 
 # $1: string - The command to run
 exec_ssh_cmd()
