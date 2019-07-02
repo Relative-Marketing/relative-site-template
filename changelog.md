@@ -8,6 +8,7 @@
 - Remote Server cleanup once backup ops are completed
   - Delete db backup
   - Delete file backup
+- Custom backup_exclude option: A comma seperated string of files/folders to exclude
 
 # 1.0.2 - 2019-07-02
 
