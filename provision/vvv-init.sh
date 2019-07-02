@@ -23,6 +23,7 @@ SSH_USER=`get_config_value 'ssh_user' 'relative'`
 SSH_PORT=`get_config_value 'ssh_port' '2020'`
 DB_BACKUP_NAME=`get_config_value 'db_backup_name' 'vvv-db-backup.sql'`
 TAR_NAME=`get_config_value 'tar_name' 'vvv-backup.tar.gz'`
+EXCLUDES=`get_config_value 'excludes' 'false'`
 
 # $1: string - The command to run
 exec_ssh_cmd()
@@ -93,7 +94,19 @@ provision_files()
 {
     echo "Attempting to create a compressed backup for download, this may take some time"
     # TODO accept custom excludes from vvv-custom
-    rsync -azvhu --exclude=staging --exclude=wp-content/infinitewp ${SSH_USER}@${SSH_HOST}:${WP_PATH} ./public_html
+
+    backup_excludes=""
+
+    if [ $EXCLUDES ]; then
+        IFS='- ' read -ra ADDR <<< "$EXCLUDES"
+        for i in "${ADDR[@]}"; do
+            backup_excludes="${backup_excludes} --exclude=\"${i}\""
+        done
+    fi
+
+    rsync -azvhu ${backup_excludes} ${SSH_USER}@${SSH_HOST}:${WP_PATH} ./public_html
+
+    echo ${backup_excludes}
     #exec_ssh_cmd "tar -jcf ${TAR_NAME} ${WP_PATH}/* --exclude=\"${WP_PATH}/staging\" --exclude=\"${WP_PATH}/wp-content/infinitewp\" --exclude=\"*.tar\" --exclude=\"*.tar.gz\" --exclude=\"*.zip\" --exclude=\"*.tmp\" --totals; exit;"
 
     if [ $? -eq 0 ]; then
