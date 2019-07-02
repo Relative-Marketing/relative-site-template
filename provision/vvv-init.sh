@@ -133,7 +133,7 @@ if [[ $PROVISION_TYPE == 'db' ]]; then
     provision_db
 fi
 
-if [[ $PROVISION_TYPE == 'test']] then
+if [[ $PROVISION_TYPE == 'test']]; then
     echo $TAR_EXCLUDES
 fi
 
