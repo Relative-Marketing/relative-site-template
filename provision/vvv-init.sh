@@ -107,16 +107,16 @@ ssh-keyscan -H ${SSH_HOST} >> /root/.ssh/known_hosts
 
 noroot mkdir -p ${VVV_PATH_TO_SITE}/public_html
 
-if [$PROVISION_TYPE == 'all']; then
+if [[$PROVISION_TYPE == 'all']]; then
     provision_files
     provision_db
 fi
 
-if [$PROVISION_TYPE == 'files']; then
+if [[$PROVISION_TYPE == 'files']]; then
     provision_files
 fi
 
-if [$PROVISION_TYPE == 'db']; then
+if [[$PROVISION_TYPE == 'db']]; then
     provision_db
 fi
 
