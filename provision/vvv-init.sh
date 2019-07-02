@@ -93,7 +93,7 @@ provision_files()
 {
     echo "Attempting to create a compressed backup for download, this may take some time"
     # TODO accept custom excludes from vvv-custom
-    exec_ssh_cmd "tar -jcvf ${TAR_NAME} ${WP_PATH}/* --exclude=\"${WP_PATH}/staging\" --exclude=\"${WP_PATH}/wp-content/infinitewp\" --exclude=\"*.tar\" --exclude=\"*.tar.gz\" --exclude=\"*.zip\" --exclude=\"*.tmp\" --totals; exit;"
+    exec_ssh_cmd "tar -jcf ${TAR_NAME} ${WP_PATH}/* --exclude=\"${WP_PATH}/staging\" --exclude=\"${WP_PATH}/wp-content/infinitewp\" --exclude=\"*.tar\" --exclude=\"*.tar.gz\" --exclude=\"*.zip\" --exclude=\"*.tmp\" --totals; exit;"
 
     if [ $? -eq 0 ]; then
         echo "Backup created attempting download"
