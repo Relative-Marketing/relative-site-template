@@ -36,6 +36,3 @@ custom:
     provision_type: db
 
 ```
-
-Defines the domains and hosts for VVV to listen on.
-The first domain in this list is your sites primary domain.
