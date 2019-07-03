@@ -41,6 +41,7 @@ setup_wp_db()
 {
     noroot wp config set DB_USER 'wp'
     noroot wp config set DB_PASSWORD 'wp'
+    noroot wp config set DB_NAME 'street_vvv'
     echo "Creating database"
     wp db create --dbuser='wp' --dbpass='wp' --allow-root
     echo "Attempting import"
