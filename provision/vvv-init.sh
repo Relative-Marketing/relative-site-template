@@ -42,7 +42,7 @@ setup_wp_db()
     noroot wp config set DB_USER 'wp'
     noroot wp config set DB_PASSWORD 'wp'
     echo "Creating database"
-    noroot wp db create --dbuser='wp' --dbpass='wp'
+    wp db create --dbuser='wp' --dbpass='wp' --alow-root
     echo "Attempting import"
     noroot wp db import ${VVV_PATH_TO_SITE}/${DB_BACKUP_NAME} --dbuser='wp' --dbpass='wp'
     
