@@ -106,11 +106,11 @@ provision_files()
     if [ $EXCLUDES ]; then
         IFS=',' read -ra ADDR <<< "$EXCLUDES"
         for i in "${ADDR[@]}"; do
-            backup_excludes="${backup_excludes} --exclude=\"${i}\""
+            backup_excludes="${backup_excludes}--exclude=\"${i}\" "
         done
     fi
-
-    rsync -azvhu ${backup_excludes} ${SSH_USER}@${SSH_HOST}:${WP_PATH} ./public_html
+    
+    echo "rsync -azvhu ${backup_excludes}${SSH_USER}@${SSH_HOST}:${WP_PATH} ./public_html"
 
     echo ${backup_excludes}
     #exec_ssh_cmd "tar -jcf ${TAR_NAME} ${WP_PATH}/* --exclude=\"${WP_PATH}/staging\" --exclude=\"${WP_PATH}/wp-content/infinitewp\" --exclude=\"*.tar\" --exclude=\"*.tar.gz\" --exclude=\"*.zip\" --exclude=\"*.tmp\" --totals; exit;"
