@@ -4,7 +4,7 @@
 
 Sync a live site using just the `vvv-custom.yml` file
 
-# Configuration
+## Configuration
 
 Make sure your local machine has a key setup that can be used to access the server you would like to replicate.
 
@@ -20,7 +20,7 @@ my-site:
     ssh_user: A valid ssh user (that is associated with the key on your local machine)
 ```
 
-## Additional accepting options
+### Additional accepted options
 
 ```
 custom:
