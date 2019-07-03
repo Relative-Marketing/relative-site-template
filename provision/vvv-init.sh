@@ -17,12 +17,11 @@ echo " * Running relative marketing custom site template"
 # Could expand this in future to allow media, plugins, themes could also allow a combination e.g db and media
 PROVISION_TYPE=`get_config_value 'provision_type' 'all'`
 DOMAIN=`get_primary_host "${VVV_SITE_NAME}".test`
-WP_PATH='public_html'
-SSH_HOST=`get_config_value 'ssh_host' '31.193.3.183.srvlist.ukfast.net'`
-SSH_USER=`get_config_value 'ssh_user' 'relative'`
+WP_PATH=`get_config_value 'wp_path' 'public_html'`
+SSH_HOST=`get_config_value 'ssh_host' 'false'`
+SSH_USER=`get_config_value 'ssh_user' 'false'`
 SSH_PORT=`get_config_value 'ssh_port' '2020'`
 DB_BACKUP_NAME=`get_config_value 'db_backup_name' 'vvv-db-backup.sql'`
-TAR_NAME=`get_config_value 'tar_name' 'vvv-backup.tar.gz'`
 EXCLUDES=`get_config_value 'backup_exclude' 'false'`
 
 # $1: string - The command to run
@@ -112,82 +111,62 @@ provision_files()
             backup_excludes="${backup_excludes}--exclude=${i} "
         done
     fi
-    
-    echo "rsync -azvhu ${backup_excludes}${SSH_USER}@${SSH_HOST}:${WP_PATH} ./public_html"
+
     rsync -azvhu ${backup_excludes}${SSH_USER}@${SSH_HOST}:${WP_PATH} ./public_html
 
-    echo ${backup_excludes}
-    #exec_ssh_cmd "tar -jcf ${TAR_NAME} ${WP_PATH}/* --exclude=\"${WP_PATH}/staging\" --exclude=\"${WP_PATH}/wp-content/infinitewp\" --exclude=\"*.tar\" --exclude=\"*.tar.gz\" --exclude=\"*.zip\" --exclude=\"*.tmp\" --totals; exit;"
-
     if [ $? -eq 0 ]; then
-        #echo "Backup created attempting download"
-        #exec_scp_cmd ${TAR_NAME}
-    echo "rsync success"
-
+        echo "File sync success"
     else
-        echo "FAILED to create complete TAR file, this could be due to incorrect file permissions"
+        echo "FAILED to sync files"
+        exit 1
     fi
 }
 
-
-# We're probably going to need to ssh into the server at somepoint regardless of what we do so add the host
-echo "Adding ${SSH_HOST} to known_hosts"
-ssh-keyscan -H ${SSH_HOST} >> /root/.ssh/known_hosts
-
-noroot mkdir -p ${VVV_PATH_TO_SITE}/public_html
-
-if [[ $PROVISION_TYPE == 'all' ]]; then
-    provision_files
-    provision_db
-fi
-
-if [[ $PROVISION_TYPE == 'files' ]]; then
-    provision_files
-fi
-
-if [[ $PROVISION_TYPE == 'db' ]]; then
-    provision_db
-fi
-
-# Here we need to decide what we're doing based on the backup type
-
-# Original
-
-#Shouldn't need any of this any more
-#echo "Attempting connection to server, backup of db and wp files, this may take some time"
-
-#ssh ${SSH_USER}@${SSH_HOST} "wp db export --path=${WP_PATH} ${DB_BACKUP_NAME}; mv ${DB_BACKUP_NAME} ${WP_PATH}/; tar -jcf ${TAR_NAME} ${WP_PATH}/* --exclude="*.tar" --exclude="*.tar.gz" --exclude="*.zip" --totals; ls ${WP_PATH}; exit;" -P 2020
-
-
-# echo "Attempting download of backup this may take some time"
-# scp -P 2020 ${SSH_USER}@${SSH_HOST}:${TAR_NAME} ${VVV_PATH_TO_SITE}
-# echo "Backup downloaded, now attempting extract"
-# tar -jxf ${VVV_PATH_TO_SITE}/${TAR_NAME} -C ${VVV_PATH_TO_SITE}
-
-
-
-
-echo "Setting up the log subfolder for Nginx logs"
-noroot mkdir -p ${VVV_PATH_TO_SITE}/log
-noroot touch ${VVV_PATH_TO_SITE}/log/nginx-error.log
-noroot touch ${VVV_PATH_TO_SITE}/log/nginx-access.log
-
-noroot touch ${VVV_PATH_TO_SITE}/public_html/index.php
-
-echo "Copying the sites Nginx config template ( fork this site template to customise the template )"
-cp -f "${VVV_PATH_TO_SITE}/provision/vvv-nginx.conf.tmpl" "${VVV_PATH_TO_SITE}/provision/vvv-nginx.conf"
-
-if [ -n "$(type -t is_utility_installed)" ] && [ "$(type -t is_utility_installed)" = function ] && `is_utility_installed core tls-ca`; then
-  echo "Inserting the SSL key locations into the sites Nginx config"
-  VVV_CERT_DIR="/srv/certificates"
-  # On VVV 2.x we don't have a /srv/certificates mount, so switch to /vagrant/certificates
-  codename=$(lsb_release --codename | cut -f2)
-  if [[ $codename == "trusty" ]]; then # VVV 2 uses Ubuntu 14 LTS trusty
-    VVV_CERT_DIR="/vagrant/certificates"
-  fi
-  sed -i "s#{{TLS_CERT}}#ssl_certificate ${VVV_CERT_DIR}/${VVV_SITE_NAME}/dev.crt;#" "${VVV_PATH_TO_SITE}/provision/vvv-nginx.conf"
-  sed -i "s#{{TLS_KEY}}#ssl_certificate_key ${VVV_CERT_DIR}/${VVV_SITE_NAME}/dev.key;#" "${VVV_PATH_TO_SITE}/provision/vvv-nginx.conf"
+if [[ ( ! ${SSH_HOST} ) || ( ! ${SSH_USER} ) ]]; then
+    echo "Error: You must specify an ssh_user and ssh_host, see readme for examples" 
+    exit 1
 else
-    sed -i "s#{{TLS_CERT}}##" "${VVV_PATH_TO_SITE}/provision/vvv-nginx.conf"
-    sed -i "s#{{TLS_KEY}}##" "${VVV_PATH_TO_SITE}/provision/vvv-nginx.conf"
+    # We're probably going to need to ssh into the server at somepoint regardless of what we do so add the host
+    echo "Adding ${SSH_HOST} to known_hosts"
+    ssh-keyscan -H ${SSH_HOST} >> /root/.ssh/known_hosts
+
+    noroot mkdir -p ${VVV_PATH_TO_SITE}/public_html
+
+    if [[ $PROVISION_TYPE == 'all' ]]; then
+        provision_files
+        provision_db
+    fi
+
+    if [[ $PROVISION_TYPE == 'files' ]]; then
+        provision_files
+    fi
+
+    if [[ $PROVISION_TYPE == 'db' ]]; then
+        provision_db
+    fi
+
+    echo "Setting up the log subfolder for Nginx logs"
+    noroot mkdir -p ${VVV_PATH_TO_SITE}/log
+    noroot touch ${VVV_PATH_TO_SITE}/log/nginx-error.log
+    noroot touch ${VVV_PATH_TO_SITE}/log/nginx-access.log
+
+    noroot touch ${VVV_PATH_TO_SITE}/public_html/index.php
+
+    echo "Copying the sites Nginx config template ( fork this site template to customise the template )"
+    cp -f "${VVV_PATH_TO_SITE}/provision/vvv-nginx.conf.tmpl" "${VVV_PATH_TO_SITE}/provision/vvv-nginx.conf"
+
+    if [ -n "$(type -t is_utility_installed)" ] && [ "$(type -t is_utility_installed)" = function ] && `is_utility_installed core tls-ca`; then
+    echo "Inserting the SSL key locations into the sites Nginx config"
+    VVV_CERT_DIR="/srv/certificates"
+    # On VVV 2.x we don't have a /srv/certificates mount, so switch to /vagrant/certificates
+    codename=$(lsb_release --codename | cut -f2)
+    if [[ $codename == "trusty" ]]; then # VVV 2 uses Ubuntu 14 LTS trusty
+        VVV_CERT_DIR="/vagrant/certificates"
+    fi
+    sed -i "s#{{TLS_CERT}}#ssl_certificate ${VVV_CERT_DIR}/${VVV_SITE_NAME}/dev.crt;#" "${VVV_PATH_TO_SITE}/provision/vvv-nginx.conf"
+    sed -i "s#{{TLS_KEY}}#ssl_certificate_key ${VVV_CERT_DIR}/${VVV_SITE_NAME}/dev.key;#" "${VVV_PATH_TO_SITE}/provision/vvv-nginx.conf"
+    else
+        sed -i "s#{{TLS_CERT}}##" "${VVV_PATH_TO_SITE}/provision/vvv-nginx.conf"
+        sed -i "s#{{TLS_KEY}}##" "${VVV_PATH_TO_SITE}/provision/vvv-nginx.conf"
+    fi
 fi
