@@ -112,7 +112,7 @@ provision_files()
         done
     fi
 
-    rsync -azvhu ${backup_excludes}${SSH_USER}@${SSH_HOST}:${WP_PATH} ./public_html
+    rsync -azvhu ${backup_excludes}${SSH_USER}@${SSH_HOST}:${WP_PATH} ${VVV_PATH_TO_SITE}
 
     if [ $? -eq 0 ]; then
         echo "File sync success"

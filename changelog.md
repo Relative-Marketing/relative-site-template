@@ -12,6 +12,7 @@
 ### Fixed
 
 - Issue with database creation due to permissions
+- Incorrect path used on rsync
 
 ### Changed
 
