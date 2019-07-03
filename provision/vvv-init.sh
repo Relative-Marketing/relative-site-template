@@ -106,7 +106,10 @@ provision_files()
     if [ $EXCLUDES ]; then
         IFS=',' read -ra ADDR <<< "$EXCLUDES"
         for i in "${ADDR[@]}"; do
-            backup_excludes="${backup_excludes}--exclude=/${WP_PATH}/${i} "
+            if [[ $i != *"*"* ]]; then
+                i="${WP_PATH}/${i}"
+            fi
+            backup_excludes="${backup_excludes}--exclude=/${i} "
         done
     fi
     
