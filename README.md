@@ -2,7 +2,7 @@
 
 ## Overview
 
-Take a backup of an existing site using just the `vvv-custom.yml` file
+Sync a live site using just the `vvv-custom.yml` file
 
 # Configuration
 
@@ -20,24 +20,22 @@ my-site:
     ssh_user: A valid ssh user (that is associated with the key on your local machine)
 ```
 
-## Configuration Options
+## Additional accepting options
 
 ```
-hosts:
-    - foo.test
-    - bar.test
-    - baz.test
+custom:
+    # A comma seperated list of files/folders to exclude from file sync - default=false
+    backup_excludes: 'wp-content/some-dir,*.tar,*.zip'
+    # Use a custom name for the database backup - default='vvv-db-backup.sql'
+    db_backup_name: 'my-custom-sql-backup-name.sql'
+    # The ssh port to use - default=2020
+    ssh_port: 22
+    # The remote path of your wordpress install - default='public_html'
+    wp_path: "htdocs"
+    # If you just want to provision files or db - allowed options 'all', 'db', 'files' - default='all'
+    provision_type: db
+
 ```
 
 Defines the domains and hosts for VVV to listen on.
 The first domain in this list is your sites primary domain.
-
-```
-custom:
-    db_backup_name: name_of_db_file_.sql
-    tar_name: name_of_backup_.tar.gz
-```
-
-Once you've installed your backup and have a local setup you may choose to skip provisioning the site. This is because you may not want to redownload the backup everytime you provision, this is especially true if you use this site template for multiple sites (It could take forever to backup all your sites!)
-
-@TODO - Clean up tar and sql files after successful install.
