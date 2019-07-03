@@ -41,9 +41,12 @@ setup_wp_db()
 {
     noroot wp config set DB_USER 'wp'
     noroot wp config set DB_PASSWORD 'wp'
-    noroot wp config set DB_NAME 'street_vvv'
+    db_name=`noroot wp config get DB_NAME`
     echo "Creating database"
-    wp db create --dbuser='wp' --dbpass='wp' --allow-root
+    mysql -u root --password=root -e "CREATE DATABASE IF NOT EXISTS ${db_name}"
+    echo "Granting wp user priviledges to the '${db_name}' database"
+    mysql -u root --password=root -e "GRANT ALL PRIVILEGES ON ${db_name}.* TO wp@localhost IDENTIFIED BY 'wp';"
+
     echo "Attempting import"
     noroot wp db import ${VVV_PATH_TO_SITE}/${DB_BACKUP_NAME} --dbuser='wp' --dbpass='wp'
     
