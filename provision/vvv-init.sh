@@ -27,13 +27,13 @@ EXCLUDES=`get_config_value 'backup_exclude' 'false'`
 # $1: string - The command to run
 exec_ssh_cmd()
 {
-    ssh ${SSH_USER}@${SSH_HOST} $1 -p ${SSH_PORT}
+    noroot ssh ${SSH_USER}@${SSH_HOST} $1 -p ${SSH_PORT}
 }
 
 # $1: string - The full path of the file to download
 exec_scp_cmd()
 {
-    scp -P ${SSH_PORT} ${SSH_USER}@${SSH_HOST}:$1 ${VVV_PATH_TO_SITE}
+    noroot scp -P ${SSH_PORT} ${SSH_USER}@${SSH_HOST}:$1 ${VVV_PATH_TO_SITE}
 }
 
 setup_wp_db()
