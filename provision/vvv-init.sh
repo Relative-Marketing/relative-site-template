@@ -172,7 +172,7 @@ if [[ ( ! ${SSH_HOST} ) || ( ! ${SSH_USER} ) ]]; then
     exit 1
 else
     echo "Checking input:"
-    test=URI.escape(STDIN.gets.chomp)
+    test=STDIN.gets.chomp
     echo ${test}
     # We're probably going to need to ssh into the server at somepoint regardless of what we do so add the host
     echo "Adding ${SSH_HOST} to known_hosts"
