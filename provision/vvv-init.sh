@@ -87,11 +87,17 @@ provision_db()
     db_user=`noroot wp config get DB_USER`
     db_pass=`noroot wp config get DB_PASSWORD`
     touch ${VVV_PATH_TO_SITE}/.my.cnf
+    echo "Creating .my.cnf for remote mysqldump"
     echo -e "[mysqldump]\nuser=${db_user}\npassword=${db_pass}" > ${VVV_PATH_TO_SITE}/.my.cnf
-    rm -rf ${VVV_PATH_TO_SITE}/.my.cnf
+    echo "Uploading config"
     noroot scp -P ${SSH_PORT} ${VVV_PATH_TO_SITE}/.my.cnf ${SSH_USER}@${SSH_HOST}:~/
+    echo "Attempting backup"
+
+    echo "exec_ssh_cmd "mysqldump -u ${db_user} ${db_name}" > ${VVV_PATH_TO_SITE}/${DB_BACKUP_NAME}" 
     exec_ssh_cmd "mysqldump -u ${db_user} ${db_name}" > ${VVV_PATH_TO_SITE}/${DB_BACKUP_NAME}
-    exec_ssh_cmd "rm -rf .my.cnf"
+    echo "Cleanup .my.cnf"
+    rm -rf ${VVV_PATH_TO_SITE}/.my.cnf
+    exec_ssh_cmd "rm -rf ~/.my.cnf"
 
     setup_wp_db
     # if [ $? -eq 0 ]; then
