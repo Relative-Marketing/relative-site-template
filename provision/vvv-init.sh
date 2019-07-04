@@ -27,7 +27,8 @@ EXCLUDES=`get_config_value 'backup_exclude' 'false'`
 # $1: string - The command to run
 exec_ssh_cmd()
 {
-    noroot ssh ${SSH_USER}@${SSH_HOST} $1 -p ${SSH_PORT}
+    echo "ssh -p ${SSH_PORT} ${SSH_USER}@${SSH_HOST} $1"
+    noroot ssh -p ${SSH_PORT} ${SSH_USER}@${SSH_HOST} $1
 }
 
 # $1: string - The full path of the file to download
