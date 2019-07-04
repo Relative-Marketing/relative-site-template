@@ -36,3 +36,7 @@ custom:
     provision_type: db
 
 ```
+## Common problems
+
+### Error: `host key verification failed`
+
