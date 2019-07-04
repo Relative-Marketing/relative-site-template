@@ -191,7 +191,7 @@ else
         provision_db
     fi
 echo "Checking input:"
-    read test
+    read -r test
     echo ${test}
     echo "Setting up the log subfolder for Nginx logs"
     noroot mkdir -p ${VVV_PATH_TO_SITE}/log
