@@ -138,9 +138,7 @@ if [[ ( ! ${SSH_HOST} ) || ( ! ${SSH_USER} ) ]]; then
 else
     # We're probably going to need to ssh into the server at somepoint regardless of what we do so add the host
     echo "Adding ${SSH_HOST} to known_hosts"
-    ssh-keyscan -H ${SSH_HOST} >> /root/.ssh/known_hosts
-
-    cat /root/.ssh/known_hosts
+    noroot ssh-keyscan -H ${SSH_HOST} >> /root/.ssh/known_hosts
 
     noroot mkdir -p ${VVV_PATH_TO_SITE}/public_html
 
