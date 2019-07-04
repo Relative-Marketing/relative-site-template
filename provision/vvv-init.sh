@@ -122,13 +122,13 @@ provision_files()
         done
     fi
 
-    noroot rsync -azvhu -e "ssh -vvvp ${SSH_PORT}" ${backup_excludes}${SSH_USER}@${SSH_HOST}:${WP_PATH} ${VVV_PATH_TO_SITE}
+    rsync -azvhu -e "ssh -vvvp ${SSH_PORT}" ${backup_excludes}${SSH_USER}@${SSH_HOST}:${WP_PATH} ${VVV_PATH_TO_SITE}
 
     if [ $? -eq 0 ]; then
         echo "File sync success"
     else
-        echo "FAILED to sync files"
-        exit 1
+        echo "FAILED to sync files trying as vagrant user"
+        noroot rsync -azvhu -e "ssh -vvvp ${SSH_PORT}" ${backup_excludes}${SSH_USER}@${SSH_HOST}:${WP_PATH} ${VVV_PATH_TO_SITE}
     fi
 }
 
@@ -139,6 +139,7 @@ else
     # We're probably going to need to ssh into the server at somepoint regardless of what we do so add the host
     echo "Adding ${SSH_HOST} to known_hosts"
     noroot ssh-keyscan -H ${SSH_HOST} >> /root/.ssh/known_hosts
+    ssh-keyscan -H ${SSH_HOST} >> /root/.ssh/known_hosts
 
     noroot mkdir -p ${VVV_PATH_TO_SITE}/public_html
 
