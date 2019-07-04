@@ -27,7 +27,7 @@ EXCLUDES=`get_config_value 'backup_exclude' 'false'`
 # $1: string - The command to run
 exec_ssh_cmd()
 {
-    ssh ${SSH_USER}@${SSH_HOST} $1 -P ${SSH_PORT}
+    ssh ${SSH_USER}@${SSH_HOST} $1 -p ${SSH_PORT}
 }
 
 # $1: string - The full path of the file to download
@@ -112,7 +112,6 @@ provision_files()
         done
     fi
 
-    echo "rsync -azvhu -e 'ssh -p ${SSH_PORT}' ${backup_excludes}${SSH_USER}@${SSH_HOST}:${WP_PATH} ${VVV_PATH_TO_SITE}"
     noroot rsync -azvhu -e "ssh -vvvp ${SSH_PORT}" ${backup_excludes}${SSH_USER}@${SSH_HOST}:${WP_PATH} ${VVV_PATH_TO_SITE}
 
     if [ $? -eq 0 ]; then
