@@ -84,7 +84,9 @@ provision_db()
     # Download the wp-config file
     exec_scp_cmd "${WP_PATH}/wp-config.php"
     db_name=`noroot wp config get DB_NAME`
-    exec_ssh_cmd "mysqldump -u dbuser -p ${db_name} | gzip -9" > dblocal.sql.gz
+    db_user=`noroot wp config get DB_USER`
+
+    exec_ssh_cmd "mysqldump -u ${db_user} -p ${db_name} | gzip -9" > dblocal.sql.gz
     
     if [ $? -eq 0 ]; then
         echo "Database backup succeeded"
