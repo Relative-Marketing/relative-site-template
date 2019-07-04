@@ -88,26 +88,27 @@ provision_db()
     db_pass=`noroot wp config get DB_PASSWORD`
     touch ${VVV_PATH_TO_SITE}/.my.cnf
     echo -e "[mysqldump]\nuser=${db_user}\npassword=${db_pass}" > ${VVV_PATH_TO_SITE}/.my.cnf
-
+    rm -rf ${VVV_PATH_TO_SITE}/.my.cnf
     noroot scp -P ${SSH_PORT} ${VVV_PATH_TO_SITE}/.my.cnf ${SSH_USER}@${SSH_HOST}:~/
-    exec_ssh_cmd "mysqldump -u ${db_user} ${db_name} | gzip -9" > ${VVV_PATH_TO_SITE}/dblocal.sql.gz
-    
-    if [ $? -eq 0 ]; then
-        echo "Database backup succeeded"
-        echo "Downloading database backup"
-        exec_scp_cmd ${DB_BACKUP_NAME}
+    exec_ssh_cmd "mysqldump -u ${db_user} ${db_name}" > ${VVV_PATH_TO_SITE}/${DB_BACKUP_NAME}
+    exec_ssh_cmd "rm -rf .my.cnf"
 
-        if [ $? -eq 0 ]; then
-            echo "Database download success"
-            echo "Attempting database import"
-            setup_wp_db
-            echo "Removing DB backup files"
-            exec_ssh_cmd "rm -rf ${DB_BACKUP_NAME}; exit;"
-            rm -rf ${DB_BACKUP_NAME}
-        fi
-    else
-        echo "FAILED Database backup"
-    fi
+    setup_wp_db
+    # if [ $? -eq 0 ]; then
+    #     echo "Database backup succeeded"
+    #     echo "Downloading database backup"
+    #     # exec_scp_cmd ${DB_BACKUP_NAME}
+
+    #     if [ $? -eq 0 ]; then
+    #         echo "Database download success"
+    #         echo "Attempting database import"
+    #         echo "Removing DB backup files"
+    #         exec_ssh_cmd "rm -rf ${DB_BACKUP_NAME}; exit;"
+    #         rm -rf ${DB_BACKUP_NAME}
+    #     fi
+    # else
+    #     echo "FAILED Database backup"
+    # fi
 }
 
 provision_files()
