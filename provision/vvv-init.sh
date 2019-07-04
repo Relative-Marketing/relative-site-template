@@ -77,6 +77,14 @@ provision_db()
 {
     echo "Attempting backup of database"
     exec_ssh_cmd "wp db export --path=${WP_PATH} ${DB_BACKUP_NAME}; exit;"
+
+    # We can't count on the remote host to have wp-cli installed so to get around this we need to extract the
+    # live db_name, db_password then export the db on the server using those credentials
+
+    # Download the wp-config file
+    exec_scp_cmd "${WP_PATH}/wp-config.php"
+    db_name=`wp config get DB_NAME`
+    exec_ssh_cmd "mysqldump -u dbuser -p ${db_name} | gzip -9" > dblocal.sql.gz
     
     if [ $? -eq 0 ]; then
         echo "Database backup succeeded"
