@@ -131,6 +131,8 @@ else
     echo "Adding ${SSH_HOST} to known_hosts"
     ssh-keyscan -H ${SSH_HOST} >> /root/.ssh/known_hosts
 
+    cat /root/.ssh/known_hosts
+
     noroot mkdir -p ${VVV_PATH_TO_SITE}/public_html
 
     if [[ $PROVISION_TYPE == 'all' ]]; then
