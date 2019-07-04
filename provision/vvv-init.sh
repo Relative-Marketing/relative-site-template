@@ -86,9 +86,9 @@ provision_db()
     db_name=`noroot wp config get DB_NAME`
     db_user=`noroot wp config get DB_USER`
     db_pass=`noroot wp config get DB_PASSWORD`
-    touch {VVV_PATH_TO_SITE}/.my.cnf
-    echo -e "[mysqldump]\nuser=${db_user}\npassword=${db_password}" > {VVV_PATH_TO_SITE}/.my.cnf
-cat {VVV_PATH_TO_SITE}/.my.cnf
+    touch ${VVV_PATH_TO_SITE}/.my.cnf
+    echo -e "[mysqldump]\nuser=${db_user}\npassword=${db_password}" > ${VVV_PATH_TO_SITE}/.my.cnf
+cat ${VVV_PATH_TO_SITE}/.my.cnf
 #    exec_ssh_cmd "mysqldump -u ${db_user} -p ${db_name} | gzip -9" > dblocal.sql.gz
     
     if [ $? -eq 0 ]; then
