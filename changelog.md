@@ -21,12 +21,15 @@
 - **`ssh_user` and `ssh_host` is now required**
 - File backup now uses `rsync` instead of `tar` and `scp`: This means backups will only add files if they do not exist or are newer; saves time on future provisions!
 - Due to the added `backup_exclude` option nothing is excluded from backup by default
+- Changed `ssh` and `scp` calls to use `noroot`
+- WP-CLI is no longer used on the remote host as it cannot be certain that it will be installed
 
 ## 1.0.2 - 2019-07-02
 
 ### Fixed
 
 - Specifically check for .tar.gz extensions when taking a backup
+- `ssh` command using the incorrect argument for specifying the port
 
 ### Added
 

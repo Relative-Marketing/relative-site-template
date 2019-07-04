@@ -190,9 +190,7 @@ else
     if [[ $PROVISION_TYPE == 'db' ]]; then
         provision_db
     fi
-echo "Checking input:"
-    read -r test
-    echo ${test}
+
     echo "Setting up the log subfolder for Nginx logs"
     noroot mkdir -p ${VVV_PATH_TO_SITE}/log
     noroot touch ${VVV_PATH_TO_SITE}/log/nginx-error.log

@@ -38,5 +38,10 @@ custom:
 ```
 ## Common problems
 
-### Error: `host key verification failed`
+### Wordfence
 
+If you provision a site that has wordfence installed your initial provision may not work. To resolve the issue loading your newly provisioned site you need to delete the references to wordfence mentioned [here](https://wordpress.org/support/topic/fatal-error-with-wordfence-2/)
+
+For most cases simply deleting your `.user.ini` file will be the solution:
+
+`rm -rf /path/to/site/public_html/.user.ini`
