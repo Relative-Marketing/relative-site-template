@@ -90,7 +90,7 @@ provision_db()
     echo -e "[mysqldump]\nuser=${db_user}\npassword=${db_pass}" > ${VVV_PATH_TO_SITE}/.my.cnf
 
     noroot scp -P ${SSH_PORT} ${VVV_PATH_TO_SITE}/.my.cnf ${SSH_USER}@${SSH_HOST}:~/
-#    exec_ssh_cmd "mysqldump -u ${db_user} -p ${db_name} | gzip -9" > dblocal.sql.gz
+    exec_ssh_cmd "mysqldump -u ${db_user} ${db_name} | gzip -9" > ${VVV_PATH_TO_SITE}/dblocal.sql.gz
     
     if [ $? -eq 0 ]; then
         echo "Database backup succeeded"
