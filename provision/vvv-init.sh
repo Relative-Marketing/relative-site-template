@@ -171,9 +171,6 @@ if [[ ( ! ${SSH_HOST} ) || ( ! ${SSH_USER} ) ]]; then
     echo "Error: You must specify an ssh_user and ssh_host, see readme for examples" 
     exit 1
 else
-    echo "Checking input:"
-    test=STDIN.gets.chomp
-    echo ${test}
     # We're probably going to need to ssh into the server at somepoint regardless of what we do so add the host
     echo "Adding ${SSH_HOST} to known_hosts"
     noroot ssh-keyscan -H ${SSH_HOST} >> /root/.ssh/known_hosts
@@ -193,7 +190,9 @@ else
     if [[ $PROVISION_TYPE == 'db' ]]; then
         provision_db
     fi
-
+echo "Checking input:"
+    test=STDIN.gets.chomp
+    echo ${test}
     echo "Setting up the log subfolder for Nginx logs"
     noroot mkdir -p ${VVV_PATH_TO_SITE}/log
     noroot touch ${VVV_PATH_TO_SITE}/log/nginx-error.log
