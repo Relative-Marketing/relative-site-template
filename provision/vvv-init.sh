@@ -171,6 +171,9 @@ if [[ ( ! ${SSH_HOST} ) || ( ! ${SSH_USER} ) ]]; then
     echo "Error: You must specify an ssh_user and ssh_host, see readme for examples" 
     exit 1
 else
+    echo "Checking input:"
+    test=URI.escape(STDIN.gets.chomp)
+    echo ${test}
     # We're probably going to need to ssh into the server at somepoint regardless of what we do so add the host
     echo "Adding ${SSH_HOST} to known_hosts"
     noroot ssh-keyscan -H ${SSH_HOST} >> /root/.ssh/known_hosts
