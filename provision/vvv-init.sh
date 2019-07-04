@@ -29,6 +29,10 @@ exec_ssh_cmd()
 {
     echo "ssh -p ${SSH_PORT} ${SSH_USER}@${SSH_HOST} $1"
     noroot ssh -p ${SSH_PORT} ${SSH_USER}@${SSH_HOST} $1
+
+    if [ ! $? -eq 0 ]; then
+        ssh -p ${SSH_PORT} ${SSH_USER}@${SSH_HOST} $1
+    fi
 }
 
 # $1: string - The full path of the file to download
@@ -80,6 +84,10 @@ provision_db()
     # Download the wp-config file
     noroot scp -P ${SSH_PORT} ${SSH_USER}@${SSH_HOST}:${WP_PATH}/wp-config.php ${VVV_PATH_TO_SITE}/public_html
     
+    if [ ! $? -eq 0 ]; then
+        scp -P ${SSH_PORT} ${SSH_USER}@${SSH_HOST}:${WP_PATH}/wp-config.php ${VVV_PATH_TO_SITE}/public_html
+    fi
+
     # store the required credentials
     db_name=`noroot wp config get DB_NAME`
     db_user=`noroot wp config get DB_USER`
@@ -92,6 +100,10 @@ provision_db()
 
     echo "Uploading config"
     noroot scp -P ${SSH_PORT} ${VVV_PATH_TO_SITE}/.my.cnf ${SSH_USER}@${SSH_HOST}:~/
+
+    if [ ! $? -eq 0 ]; then
+        scp -P ${SSH_PORT} ${VVV_PATH_TO_SITE}/.my.cnf ${SSH_USER}@${SSH_HOST}:~/
+    fi
     
     echo "Attempting backup"
 
