@@ -82,7 +82,7 @@ provision_db()
     # live db_name, db_password then export the db on the server using those credentials
 
     # Download the wp-config file
-    exec_scp_cmd "${WP_PATH}/wp-config.php"
+    noroot scp -P ${SSH_PORT} ${SSH_USER}@${SSH_HOST}:${WP_PATH}/wp-config.php ${VVV_PATH_TO_SITE}/public_html
     db_name=`noroot wp config get DB_NAME`
     db_user=`noroot wp config get DB_USER`
     db_pass=`noroot wp config get DB_PASSWORD`
