@@ -75,52 +75,40 @@ setup_wp_db()
 
 provision_db()
 {
-    echo "Attempting backup of database"
-    exec_ssh_cmd "wp db export --path=${WP_PATH} ${DB_BACKUP_NAME}; exit;"
-
-    # We can't count on the remote host to have wp-cli installed so to get around this we need to extract the
-    # live db_name, db_password then export the db on the server using those credentials
+    # We can't count on the remote host to have wp-cli installed so to get around that use a .my.cnf file and delete once done
 
     # Download the wp-config file
     noroot scp -P ${SSH_PORT} ${SSH_USER}@${SSH_HOST}:${WP_PATH}/wp-config.php ${VVV_PATH_TO_SITE}/public_html
+    
+    # store the required credentials
     db_name=`noroot wp config get DB_NAME`
     db_user=`noroot wp config get DB_USER`
     db_pass=`noroot wp config get DB_PASSWORD`
+
+    # create the file and add the needed credentials
     touch ${VVV_PATH_TO_SITE}/.my.cnf
     echo "Creating .my.cnf for remote mysqldump"
     echo -e "[mysqldump]\nuser=${db_user}\npassword=${db_pass}" > ${VVV_PATH_TO_SITE}/.my.cnf
+
     echo "Uploading config"
     noroot scp -P ${SSH_PORT} ${VVV_PATH_TO_SITE}/.my.cnf ${SSH_USER}@${SSH_HOST}:~/
+    
     echo "Attempting backup"
 
-    echo "exec_ssh_cmd "mysqldump -u ${db_user} ${db_name}" > ${VVV_PATH_TO_SITE}/${DB_BACKUP_NAME}" 
+    # dump the backup
     exec_ssh_cmd "mysqldump -u ${db_user} ${db_name}" > ${VVV_PATH_TO_SITE}/${DB_BACKUP_NAME}
+
+    # remove the cnf file locally and on remote
     echo "Cleanup .my.cnf"
     rm -rf ${VVV_PATH_TO_SITE}/.my.cnf
     exec_ssh_cmd "rm -rf ~/.my.cnf"
 
     setup_wp_db
-    # if [ $? -eq 0 ]; then
-    #     echo "Database backup succeeded"
-    #     echo "Downloading database backup"
-    #     # exec_scp_cmd ${DB_BACKUP_NAME}
-
-    #     if [ $? -eq 0 ]; then
-    #         echo "Database download success"
-    #         echo "Attempting database import"
-    #         echo "Removing DB backup files"
-    #         exec_ssh_cmd "rm -rf ${DB_BACKUP_NAME}; exit;"
-    #         rm -rf ${DB_BACKUP_NAME}
-    #     fi
-    # else
-    #     echo "FAILED Database backup"
-    # fi
 }
 
 provision_files()
 {
     echo "Attempting to create a compressed backup for download, this may take some time"
-    # TODO accept custom excludes from vvv-custom
 
     backup_excludes=""
 
