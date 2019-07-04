@@ -113,7 +113,7 @@ provision_files()
     fi
 
     echo "rsync -azvhu -e 'ssh -P ${SSH_PORT}' ${backup_excludes}${SSH_USER}@${SSH_HOST}:${WP_PATH} ${VVV_PATH_TO_SITE}"
-    rsync -azvhu -e 'ssh -P ${SSH_PORT}' ${backup_excludes}${SSH_USER}@${SSH_HOST}:${WP_PATH} ${VVV_PATH_TO_SITE}
+    rsync -azvhu -e "ssh -P ${SSH_PORT}" ${backup_excludes}${SSH_USER}@${SSH_HOST}:${WP_PATH} ${VVV_PATH_TO_SITE}
 
     if [ $? -eq 0 ]; then
         echo "File sync success"

@@ -8,6 +8,7 @@
   - Delete db backup
 - Custom `backup_exclude` option: A comma seperated string of files/folders to exclude
 - `wp_path` option
+- `rsync` now utilises the `ssh_port` number
 
 ### Fixed
 
