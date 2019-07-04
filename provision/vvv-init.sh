@@ -27,18 +27,41 @@ EXCLUDES=`get_config_value 'backup_exclude' 'false'`
 # $1: string - The command to run
 exec_ssh_cmd()
 {
-    echo "ssh -p ${SSH_PORT} ${SSH_USER}@${SSH_HOST} $1"
+    echo "Attempting noroot ssh"
     noroot ssh -p ${SSH_PORT} ${SSH_USER}@${SSH_HOST} $1
 
     if [ ! $? -eq 0 ]; then
+        echo "noroot ssh failed attempting as root"
         ssh -p ${SSH_PORT} ${SSH_USER}@${SSH_HOST} $1
+
+        if [ ! $? -eq 0 ]; then
+            echo "noroot and root ssh command failed"
+        else
+            echo "ssh command success as root"
+        fi
+    else
+        echo "ssh command success"
     fi
 }
 
 # $1: string - The full path of the file to download
 exec_scp_cmd()
 {
+    echo "Attempting noroot scp"
     noroot scp -P ${SSH_PORT} ${SSH_USER}@${SSH_HOST}:$1 ${VVV_PATH_TO_SITE}
+
+    if [ ! $? -eq 0 ]; then
+        echo "noroot scp failed attempting as root"
+        scp -P ${SSH_PORT} ${SSH_USER}@${SSH_HOST}:$1 ${VVV_PATH_TO_SITE}
+        
+        if [ ! $? -eq 0 ]; then
+            echo "noroot and root scp command failed"
+        else
+            echo "scp command success as root"
+        fi
+    else
+        echo "scp command success"
+    fi
 }
 
 setup_wp_db()
