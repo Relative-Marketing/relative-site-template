@@ -83,7 +83,7 @@ provision_db()
 
     # Download the wp-config file
     exec_scp_cmd "${WP_PATH}/wp-config.php"
-    db_name=`wp config get DB_NAME`
+    db_name=`noroot wp config get DB_NAME`
     exec_ssh_cmd "mysqldump -u dbuser -p ${db_name} | gzip -9" > dblocal.sql.gz
     
     if [ $? -eq 0 ]; then
