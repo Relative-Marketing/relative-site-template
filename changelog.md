@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+## Fixed
+
+- DB Import error caused by console output being added to sql file
+
+## Removed
+
+- Verbose output of `ssh` commands
+
 ## 1.0.3 - 2019-07-04
 
 ### Added

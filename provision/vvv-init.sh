@@ -131,14 +131,14 @@ provision_db()
     echo "Attempting backup"
 
     # dump the backup
-     noroot ssh -p ${SSH_PORT} ${SSH_USER}@${SSH_HOST} "mysqldump -u ${db_user} ${db_name} > ${DB_BACKUP_NAME}"
+    exec_ssh_cmd "mysqldump -u ${db_user} ${db_name} > ${DB_BACKUP_NAME}"
 
-     exec_scp_cmd ${DB_BACKUP_NAME}
+    exec_scp_cmd ${DB_BACKUP_NAME}
 
     # remove the cnf file locally and on remote
     echo "Cleanup .my.cnf"
     rm -rf ${VVV_PATH_TO_SITE}/.my.cnf
-    exec_ssh_cmd "rm -rf ~/.my.cnf"
+    exec_ssh_cmd "rm -rf ~/.my.cnf ${DB_BACKUP_NAME}"
 
     setup_wp_db
 }
@@ -159,13 +159,13 @@ provision_files()
         done
     fi
 
-    rsync -azvhu -e "ssh -vvvp ${SSH_PORT}" ${backup_excludes}${SSH_USER}@${SSH_HOST}:${WP_PATH} ${VVV_PATH_TO_SITE}
+    rsync -azvhu -e "ssh -p ${SSH_PORT}" ${backup_excludes}${SSH_USER}@${SSH_HOST}:${WP_PATH} ${VVV_PATH_TO_SITE}
 
     if [ $? -eq 0 ]; then
         echo "File sync success"
     else
         echo "FAILED to sync files trying as vagrant user"
-        noroot rsync -azvhu -e "ssh -vvvp ${SSH_PORT}" ${backup_excludes}${SSH_USER}@${SSH_HOST}:${WP_PATH} ${VVV_PATH_TO_SITE}
+        noroot rsync -azvhu -e "ssh -p ${SSH_PORT}" ${backup_excludes}${SSH_USER}@${SSH_HOST}:${WP_PATH} ${VVV_PATH_TO_SITE}
     fi
 }
 
