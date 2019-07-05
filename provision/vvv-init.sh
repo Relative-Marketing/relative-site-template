@@ -79,9 +79,8 @@ setup_wp_db()
     
     noroot wp config set WP_CACHE false --raw
 
-    # Turn error reporting off whilst updating urls
-    noroot wp config set WP_DEBUG false --raw
-
+    noroot wp config set WP_DEBUG true --raw
+    
     noroot wp option update home "https://${DOMAIN}"
     if [ $? -eq 0 ]; then
         echo "Home url updated successfully"
@@ -97,7 +96,6 @@ setup_wp_db()
         echo "Site url could not be updated because of an error, please review the log to see what went wrong then run: wp option update siteurl \"https://${DOMAIN}\" again."
     fi
 
-    noroot wp config set WP_DEBUG true --raw
 }
 
 provision_db()
