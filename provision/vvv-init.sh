@@ -131,7 +131,7 @@ provision_db()
     echo "Attempting backup"
 
     # dump the backup
-    exec_ssh_cmd `"mysqldump -u ${db_user} ${db_name}" > ${VVV_PATH_TO_SITE}/${DB_BACKUP_NAME}`
+     noroot ssh -p ${SSH_PORT} ${SSH_USER}@${SSH_HOST} "mysqldump -u ${db_user} ${db_name}" > ${VVV_PATH_TO_SITE}/${DB_BACKUP_NAME}
 
     # remove the cnf file locally and on remote
     echo "Cleanup .my.cnf"
