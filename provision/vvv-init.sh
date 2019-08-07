@@ -81,6 +81,8 @@ setup_wp_db()
     
     noroot wp config set WP_DEBUG false --raw
     
+    noroot wp plugin deactivate w3-total-cache
+    
     noroot wp option update home "https://${DOMAIN}"
     if [ $? -eq 0 ]; then
         echo "Home url updated successfully"
