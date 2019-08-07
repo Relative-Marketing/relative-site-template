@@ -78,8 +78,8 @@ setup_wp_db()
     noroot wp db import ${VVV_PATH_TO_SITE}/${DB_BACKUP_NAME} --dbuser='wp' --dbpass='wp'
     
     noroot wp config set WP_CACHE false --raw
-
-    noroot wp config set WP_DEBUG true --raw
+    
+    noroot wp config set WP_DEBUG false --raw
     
     noroot wp option update home "https://${DOMAIN}"
     if [ $? -eq 0 ]; then
@@ -95,6 +95,8 @@ setup_wp_db()
     else
         echo "Site url could not be updated because of an error, please review the log to see what went wrong then run: wp option update siteurl \"https://${DOMAIN}\" again."
     fi
+    
+    noroot wp config set WP_DEBUG true --raw
 
 }
 
