@@ -125,8 +125,8 @@ provision_db()
     
     # Attempt adding known host again to see if this fixes issue connecting
     echo "Adding ${SSH_HOST} to known_hosts"
-    noroot ssh-keyscan -H ${SSH_HOST} >> /root/.ssh/known_hosts
-    ssh-keyscan -H ${SSH_HOST} >> ~/.ssh/known_hosts
+    noroot ssh-keyscan -p ${SSH_PORT} -H ${SSH_HOST} >> /root/.ssh/known_hosts
+    ssh-keyscan -p ${SSH_PORT} -H ${SSH_HOST} >> ~/.ssh/known_hosts
 
     echo "Uploading config"
     noroot scp -P ${SSH_PORT} ${VVV_PATH_TO_SITE}/.my.cnf ${SSH_USER}@${SSH_HOST}:~/
