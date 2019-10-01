@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.0.4 - 2019-07-05
+
+## Fixed
+
+- DB Import error caused by console output being added to sql file
+- `WP_DEBUG` is now set to `true` before attempting to set `home` and `siteurl` options so failure to update options shows why
+
+## Removed
+
+- Verbose output of `ssh` commands
+
 ## 1.0.3 - 2019-07-04
 
 ### Added

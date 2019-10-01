@@ -78,10 +78,11 @@ setup_wp_db()
     noroot wp db import ${VVV_PATH_TO_SITE}/${DB_BACKUP_NAME} --dbuser='wp' --dbpass='wp'
     
     noroot wp config set WP_CACHE false --raw
-
-    # Turn error reporting off whilst updating urls
+    
     noroot wp config set WP_DEBUG false --raw
-
+    
+    noroot wp plugin deactivate w3-total-cache
+    
     noroot wp option update home "https://${DOMAIN}"
     if [ $? -eq 0 ]; then
         echo "Home url updated successfully"
@@ -96,8 +97,9 @@ setup_wp_db()
     else
         echo "Site url could not be updated because of an error, please review the log to see what went wrong then run: wp option update siteurl \"https://${DOMAIN}\" again."
     fi
-
+    
     noroot wp config set WP_DEBUG true --raw
+
 }
 
 provision_db()
@@ -120,6 +122,11 @@ provision_db()
     touch ${VVV_PATH_TO_SITE}/.my.cnf
     echo "Creating .my.cnf for remote mysqldump"
     echo -e "[mysqldump]\nuser=${db_user}\npassword=${db_pass}" > ${VVV_PATH_TO_SITE}/.my.cnf
+    
+    # Attempt adding known host again to see if this fixes issue connecting
+    echo "Adding ${SSH_HOST} to known_hosts"
+    noroot ssh-keyscan -H ${SSH_HOST} >> /root/.ssh/known_hosts
+    ssh-keyscan -H ${SSH_HOST} >> ~/.ssh/known_hosts
 
     echo "Uploading config"
     noroot scp -P ${SSH_PORT} ${VVV_PATH_TO_SITE}/.my.cnf ${SSH_USER}@${SSH_HOST}:~/
@@ -131,14 +138,14 @@ provision_db()
     echo "Attempting backup"
 
     # dump the backup
-     noroot ssh -p ${SSH_PORT} ${SSH_USER}@${SSH_HOST} "mysqldump -u ${db_user} ${db_name} > ${DB_BACKUP_NAME}"
+    exec_ssh_cmd "mysqldump -u ${db_user} ${db_name} > ${DB_BACKUP_NAME}"
 
-     exec_scp_cmd ${DB_BACKUP_NAME}
+    exec_scp_cmd ${DB_BACKUP_NAME}
 
     # remove the cnf file locally and on remote
     echo "Cleanup .my.cnf"
     rm -rf ${VVV_PATH_TO_SITE}/.my.cnf
-    exec_ssh_cmd "rm -rf ~/.my.cnf"
+    exec_ssh_cmd "rm -rf ~/.my.cnf ${DB_BACKUP_NAME}"
 
     setup_wp_db
 }
@@ -159,13 +166,13 @@ provision_files()
         done
     fi
 
-    rsync -azvhu -e "ssh -vvvp ${SSH_PORT}" ${backup_excludes}${SSH_USER}@${SSH_HOST}:${WP_PATH} ${VVV_PATH_TO_SITE}
+    rsync -azvhu -e "ssh -p ${SSH_PORT}" ${backup_excludes}${SSH_USER}@${SSH_HOST}:${WP_PATH}/* ${VVV_PATH_TO_SITE}/public_html
 
     if [ $? -eq 0 ]; then
         echo "File sync success"
     else
         echo "FAILED to sync files trying as vagrant user"
-        noroot rsync -azvhu -e "ssh -vvvp ${SSH_PORT}" ${backup_excludes}${SSH_USER}@${SSH_HOST}:${WP_PATH} ${VVV_PATH_TO_SITE}
+        noroot rsync -azvhu -e "ssh -p ${SSH_PORT}" ${backup_excludes}${SSH_USER}@${SSH_HOST}:${WP_PATH} ${VVV_PATH_TO_SITE}
     fi
 }
 
