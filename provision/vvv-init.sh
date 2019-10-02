@@ -122,11 +122,6 @@ provision_db()
     touch ${VVV_PATH_TO_SITE}/.my.cnf
     echo "Creating .my.cnf for remote mysqldump"
     echo -e "[mysqldump]\nuser=${db_user}\npassword=${db_pass}" > ${VVV_PATH_TO_SITE}/.my.cnf
-    
-    # Attempt adding known host again to see if this fixes issue connecting
-    echo "Adding ${SSH_HOST} to known_hosts"
-    noroot ssh-keyscan -p ${SSH_PORT} -H ${SSH_HOST} >> /root/.ssh/known_hosts
-    ssh-keyscan -p ${SSH_PORT} -H ${SSH_HOST} >> ~/.ssh/known_hosts
 
     echo "Uploading config"
     noroot scp -P ${SSH_PORT} ${VVV_PATH_TO_SITE}/.my.cnf ${SSH_USER}@${SSH_HOST}:~/
@@ -182,7 +177,7 @@ if [[ ( ! ${SSH_HOST} ) || ( ! ${SSH_USER} ) ]]; then
 else
     # We're probably going to need to ssh into the server at somepoint regardless of what we do so add the host
     echo "Adding ${SSH_HOST} to known_hosts"
-    noroot ssh-keyscan -p ${SSH_PORT} -H ${SSH_HOST} >> /root/.ssh/known_hosts
+
     ssh-keyscan -p ${SSH_PORT} -H ${SSH_HOST} >> ~/.ssh/known_hosts
 
     noroot mkdir -p ${VVV_PATH_TO_SITE}/public_html
