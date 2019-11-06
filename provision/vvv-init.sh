@@ -178,7 +178,7 @@ else
     # We're probably going to need to ssh into the server at somepoint regardless of what we do so add the host
     echo "Adding ${SSH_HOST} to known_hosts"
 
-    ssh-keyscan -p ${SSH_PORT} -H ${SSH_HOST} >> ~/.ssh/known_hosts
+    noroot ssh-keyscan -p ${SSH_PORT} -H ${SSH_HOST} >> ~/.ssh/known_hosts
 
     noroot mkdir -p ${VVV_PATH_TO_SITE}/public_html
 
