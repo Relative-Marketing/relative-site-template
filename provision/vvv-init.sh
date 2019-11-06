@@ -142,9 +142,9 @@ provision_db()
     exec_scp_cmd ${DB_BACKUP_NAME}
 
     # remove the cnf file locally and on remote
-    echo -e "\033[31mCleanup .my.cnf\e[0m"
-    rm -rf ${VVV_PATH_TO_SITE}/.my.cnf
-    exec_ssh_cmd "rm -rf ~/.my.cnf ${DB_BACKUP_NAME}"
+    #echo -e "\033[31mCleanup .my.cnf\e[0m"
+    #rm -rf ${VVV_PATH_TO_SITE}/.my.cnf
+    #exec_ssh_cmd "rm -rf ~/.my.cnf ${DB_BACKUP_NAME}"
 
     setup_wp_db
 }
