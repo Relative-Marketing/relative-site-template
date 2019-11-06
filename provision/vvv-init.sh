@@ -69,12 +69,12 @@ setup_wp_db()
     noroot wp config set DB_USER 'wp'
     noroot wp config set DB_PASSWORD 'wp'
     db_name=`noroot wp config get DB_NAME`
-    echo "Creating database"
+    echo -e "\033[31mCreating database"
     mysql -u root --password=root -e "CREATE DATABASE IF NOT EXISTS ${db_name}"
-    echo "Granting wp user priviledges to the '${db_name}' database"
+    echo -e "\033[31mGranting wp user priviledges to the '${db_name}' database"
     mysql -u root --password=root -e "GRANT ALL PRIVILEGES ON ${db_name}.* TO wp@localhost IDENTIFIED BY 'wp';"
 
-    echo "Attempting import"
+    echo -e "\033[31mAttempting import of database"
     noroot wp db import ${VVV_PATH_TO_SITE}/${DB_BACKUP_NAME} --dbuser='wp' --dbpass='wp'
     
     noroot wp config set WP_CACHE false --raw
@@ -85,17 +85,17 @@ setup_wp_db()
     
     noroot wp option update home "https://${DOMAIN}"
     if [ $? -eq 0 ]; then
-        echo "Home url updated successfully"
+        echo -e "\033[31mHome url updated successfully\e[0m"
     else
-        echo "Home url could not be updated because of an error, please review the log to see what went wrong then run: wp option update home \"https://${DOMAIN}\" again."
+        echo -e "\033[31mHome url could not be updated because of an error, please review the log to see what went wrong then run: wp option update home \"https://${DOMAIN}\" again.\e[0m"
     fi
 
     noroot wp option update siteurl "https://${DOMAIN}"
 
     if [ $? -eq 0 ]; then
-        echo "Site url updated successfully"
+        echo -e "\033[31mSite url updated successfully\e[0m"
     else
-        echo "Site url could not be updated because of an error, please review the log to see what went wrong then run: wp option update siteurl \"https://${DOMAIN}\" again."
+        echo -e "\033[31mSite url could not be updated because of an error, please review the log to see what went wrong then run: wp option update siteurl \"https://${DOMAIN}\" again.\e[0m"
     fi
     
     noroot wp config set WP_DEBUG true --raw
@@ -120,17 +120,17 @@ provision_db()
 
     # create the file and add the needed credentials
     touch ${VVV_PATH_TO_SITE}/.my.cnf
-    echo "Creating .my.cnf for remote mysqldump"
+    echo -e "\033[31mCreating .my.cnf for remote mysqldump\e[0m"
     echo -e "[mysqldump]\nuser=${db_user}\npassword=${db_pass}" > ${VVV_PATH_TO_SITE}/.my.cnf
 
-    echo "Uploading config"
+    echo -e "\033[31mUploading config\e[0m"
     noroot scp -P ${SSH_PORT} ${VVV_PATH_TO_SITE}/.my.cnf ${SSH_USER}@${SSH_HOST}:~/
 
     if [ ! $? -eq 0 ]; then
         scp -P ${SSH_PORT} ${VVV_PATH_TO_SITE}/.my.cnf ${SSH_USER}@${SSH_HOST}:~/
     fi
     
-    echo "Attempting backup"
+    echo -e "\033[31mAttempting database backup\e[0m"
 
     # dump the backup
     exec_ssh_cmd "mysqldump -u ${db_user} ${db_name} > ${DB_BACKUP_NAME}"
@@ -138,7 +138,7 @@ provision_db()
     exec_scp_cmd ${DB_BACKUP_NAME}
 
     # remove the cnf file locally and on remote
-    echo "Cleanup .my.cnf"
+    echo -e "\033[31mCleanup .my.cnf\e[0m"
     rm -rf ${VVV_PATH_TO_SITE}/.my.cnf
     exec_ssh_cmd "rm -rf ~/.my.cnf ${DB_BACKUP_NAME}"
 
@@ -147,7 +147,7 @@ provision_db()
 
 provision_files()
 {
-    echo "Attempting to create a compressed backup for download, this may take some time"
+    echo -e "\033[31mAttempting to create a compressed backup for download, this may take some time\e[0m"
 
     backup_excludes=""
 
@@ -164,9 +164,9 @@ provision_files()
     rsync -azvhu -e "ssh -p ${SSH_PORT}" ${backup_excludes}${SSH_USER}@${SSH_HOST}:${WP_PATH}/* ${VVV_PATH_TO_SITE}/public_html
 
     if [ $? -eq 0 ]; then
-        echo "File sync success"
+        echo -e "\033[31mFile sync success\e[0m"
     else
-        echo "FAILED to sync files trying as vagrant user"
+        echo -e "\033[31mFAILED to sync files trying root attempting as noroot\e[0m"
         noroot rsync -azvhu -e "ssh -p ${SSH_PORT}" ${backup_excludes}${SSH_USER}@${SSH_HOST}:${WP_PATH} ${VVV_PATH_TO_SITE}
     fi
 }
@@ -176,7 +176,7 @@ if [[ ( ! ${SSH_HOST} ) || ( ! ${SSH_USER} ) ]]; then
     exit 1
 else
     # We're probably going to need to ssh into the server at somepoint regardless of what we do so add the host
-    echo "Adding ${SSH_HOST} to known_hosts"
+    echo -e "\033[31mAdding ${SSH_HOST} to known_hosts\e[0m"
 
     noroot ssh-keyscan -p ${SSH_PORT} -H ${SSH_HOST} >> ~/.ssh/known_hosts
 
