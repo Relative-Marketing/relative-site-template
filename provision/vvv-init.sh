@@ -128,6 +128,10 @@ provision_db()
 
     if [ ! $? -eq 0 ]; then
         scp -P ${SSH_PORT} ${VVV_PATH_TO_SITE}/.my.cnf ${SSH_USER}@${SSH_HOST}:~/
+        
+        if [ ! $? -eq 0 ]; then
+            echo -e "\033[31mUploading .cnf failed as root\e[0m"
+        fi
     fi
     
     echo -e "\033[31mAttempting database backup\e[0m"
