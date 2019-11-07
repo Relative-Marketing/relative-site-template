@@ -121,7 +121,7 @@ provision_db()
     # create the file and add the needed credentials
     touch ${VVV_PATH_TO_SITE}/.my.cnf
     echo -e "\033[31mCreating .my.cnf for remote mysqldump\e[0m"
-    echo -e "[mysqldump]\nuser=${db_user}\npassword=${db_pass}" > ${VVV_PATH_TO_SITE}/.my.cnf
+    echo -e "[mysqldump]\nuser=${db_user}\npassword='${db_pass}'" > ${VVV_PATH_TO_SITE}/.my.cnf
 
     echo -e "\033[31mUploading config\e[0m"
     noroot scp -P ${SSH_PORT} ${VVV_PATH_TO_SITE}/.my.cnf ${SSH_USER}@${SSH_HOST}:~/
