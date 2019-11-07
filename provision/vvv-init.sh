@@ -137,7 +137,7 @@ provision_db()
     echo -e "\033[31mAttempting database backup\e[0m"
 
     # dump the backup
-    exec_ssh_cmd "mysqldump -u ${db_user} ${db_name} > ${DB_BACKUP_NAME}"
+    exec_ssh_cmd "mysqldump --login-path='~/.my.cnf' -u ${db_user} ${db_name} > ${DB_BACKUP_NAME}"
 
     exec_scp_cmd ${DB_BACKUP_NAME}
 
